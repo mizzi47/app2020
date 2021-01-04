@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1039790412228",
+    "firebase_url": "https://securide-945e9.firebaseio.com",
+    "project_id": "securide-945e9",
+    "storage_bucket": "securide-945e9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039790412228:android:8bbc5a1a666854474b9491",
+        "android_client_info": {
+          "package_name": "com.fyp.app2020"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039790412228-8pnpabts8tiuab54g8flfpgg71jfl9p0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByPVK0le9rN8xcFTUfrzfAnFHIlFHKbZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039790412228-8pnpabts8tiuab54g8flfpgg71jfl9p0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
