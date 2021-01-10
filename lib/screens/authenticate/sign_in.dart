@@ -132,8 +132,7 @@ class _SignInState extends State<SignIn> {
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () async {
                       if (formkey.currentState.validate()) {
-                        //dynamic result = await _auth.signInUser(email.text, pw.text);
-                        dynamic result = await _auth.signInUser(email.text, pw.text, result.uid);
+                        dynamic result = await _auth.signInUser(email.text, pw.text);
                         if (result == null) {
                             showDialog(
                               context: context,
@@ -178,7 +177,7 @@ class _SignInState extends State<SignIn> {
                                     );
                                   }
                             else if(role == 'mech'){
-                              // await _auth.signOut();
+                              await _auth.signOut();
                               showDialog(
                                 context: context,
                                 barrierDismissible: false, // user must tap button!
