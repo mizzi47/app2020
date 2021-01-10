@@ -131,6 +131,7 @@ class _SignInState extends State<SignIn> {
                     minWidth: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () async {
+                      //_auth.getData();
                       if (formkey.currentState.validate()) {
                         dynamic result = await _auth.signInUser(email.text, pw.text);
                         if (result == null) {

@@ -241,27 +241,6 @@ class _Home extends State<Home> {
                                         )
                                       ),
                                     ),
-
-                                    // Row(
-                                    //   children: [
-                                    //     IconButton(
-                                    //         icon: Icon(Icons.edit),
-                                    //         onPressed: () {
-                                    //           Navigator.push(
-                                    //             context,
-                                    //             MaterialPageRoute(
-                                    //                 builder: (context) =>
-                                    //                     StudentUpdate(snapshot
-                                    //                         .data.docs[i])),
-                                    //           );
-                                    //         }),
-                                    //     IconButton(
-                                    //       icon: Icon(Icons.delete),
-                                    //       onPressed: (){
-                                    //         deleteStudent(i);
-                                    //       },
-                                    //     )                                      ],
-                                    // ),
                                   ],
                                 ),
                               ),

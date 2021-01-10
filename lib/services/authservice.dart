@@ -86,17 +86,18 @@ class AuthService {
     }
   }
 
-  Future getData() async {
-    userid = (await FirebaseAuth.instance.currentUser()).uid;
-    email = (await FirebaseAuth.instance.currentUser()).email;
-    // print(userid);
-    // print(email);
-    var document = await Firestore.instance.collection('USER')
-        .document(userid)
-        .get();
-    role = document.data['role'].toString();
-    return email;
-  }
+
+  //Future getData() async {
+    //userid = (await FirebaseAuth.instance.currentUser()).uid;
+    // email = (await FirebaseAuth.instance.currentUser()).email;
+    // await DatabaseService(uid: userid).complain(em, date, userid);
+    // var document = await Firestore.instance.collection('USER')
+    //     .document(userid)
+    //     .get();
+    // role = document.data['role'].toString();
+    // return email;
+   // print(userid);
+  //}
 }
 
 
