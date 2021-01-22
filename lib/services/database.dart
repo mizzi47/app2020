@@ -17,9 +17,7 @@ class DatabaseService {
         });
   }
   Future updateClientData(String nm, String bm, String pn) async {
-    int count = MechCollection.snapshots().length as int;
-    count++;
-    return await ClientCollection.document(count.toString()).setData(
+    return await ClientCollection.document(uid).setData(
         {
           'Name': nm,
           'Bike Name': bm,

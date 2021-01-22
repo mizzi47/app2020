@@ -192,7 +192,7 @@ class _MRegisterState extends State<MRegister> {
                               content: SingleChildScrollView(
                                 child: ListBody(
                                   children: <Widget>[
-                                    Text('Continue to your dashboard'),
+                                    Text('Continue to login'),
                                   ],
                                 ),
                               ),

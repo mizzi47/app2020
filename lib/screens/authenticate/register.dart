@@ -25,7 +25,7 @@ class _RegisterState extends State<Register> {
   TextEditingController nm =new  TextEditingController();
   TextEditingController bm =new  TextEditingController();
   TextEditingController pn =new  TextEditingController();
-
+  final TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
 
@@ -177,6 +177,7 @@ class _RegisterState extends State<Register> {
                     minWidth: MediaQuery.of(context).size.width*0.6,
                     padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
                     onPressed: () async {
+                      print(controller.text);
                     if (formkey.currentState.validate()) {
                       //register .. send data  to authservices
                       dynamic result = await _auth.regUser(email.text, pw.text, nm.text, bm.text, pn.text);
