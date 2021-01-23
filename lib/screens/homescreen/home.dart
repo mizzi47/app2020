@@ -184,62 +184,83 @@ class _Home extends State<Home> {
                               decoration: BoxDecoration(
                                   color: Colors.white
                               ),
-                              width: size.width*1,
-                              height: size.height*0.2,
+
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20), // if you need this
-                                        side: BorderSide(
-                                          color: Colors.grey.withOpacity(0.2),
-                                          width: 1,
-                                        ),
-                                      ),
+                                      elevation: 8.0,
+                                      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
                                       child: Container(
-                                        color: Colors.white,
-                                        width: 400,
-                                        height: 100,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text("Owner Name: "),
-                                                Text(snapshot.data.documents[i]["Name"]),
-                                              ],
+                                        decoration: BoxDecoration(color: Color.fromRGBO(64, 75, 96, .9)),
+                                        child: ListTile(
+                                            contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                            leading: Container(
+                                              padding: EdgeInsets.only(right: 12.0),
+                                              decoration: new BoxDecoration(
+                                                  border: new Border(
+                                                      right: new BorderSide(width: 1.0, color: Colors.white24))),
+                                              child: Icon(Icons.water_damage_sharp, color: Colors.white),
                                             ),
-                                            Row(
-                                              children: [
-                                                Text("Garage Name: "),
-                                                Text(snapshot.data.documents[i]["Garage Name"]),
-                                              ],
+                                            title: Text(
+                                              snapshot.data.documents[i]["Garage Name"],
+                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                             ),
-                                            Row(
-                                              children: [
-                                                Text("Phone Number: "),
-                                                Text(snapshot.data.documents[i]["Phone Number"]),
-                                                IconButton(
-                                                  icon: Icon(Icons.auto_awesome_motion),
-                                                  onPressed: (){
-                                                    // Navigator.push(
-                                                    //   context,
-                                                    //   MaterialPageRoute(
-                                                    //       builder: (context) =>
-                                                    //           StudentEdit(snapshot
-                                                    //               .data.documents[i])),
-                                                    // );
-                                                  },
-                                                )
-                                              ],
-                                            ),
+                                            // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
 
-                                          ],
-                                        )
+                                            subtitle: Row(
+                                              children: <Widget>[
+                                                Icon(Icons.account_circle_rounded, color: Colors.yellowAccent),
+                                                Text(snapshot.data.documents[i]["Name"], style: TextStyle(color: Colors.white))
+                                              ],
+                                            ),
+                                            trailing:
+                                            Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0)),
                                       ),
+
+                                      // child: Container(
+                                      //   color: Colors.white,
+                                      //   width: 400,
+                                      //   height: 100,
+                                      //   child: Column(
+                                      //     crossAxisAlignment: CrossAxisAlignment.center,
+                                      //     children: [
+                                      //       Row(
+                                      //         children: [
+                                      //           Text("Owner Name: "),
+                                      //           Text(snapshot.data.documents[i]["Name"]),
+                                      //         ],
+                                      //       ),
+                                      //       Row(
+                                      //         children: [
+                                      //           Text("Garage Name: "),
+                                      //           Text(snapshot.data.documents[i]["Garage Name"]),
+                                      //         ],
+                                      //       ),
+                                      //       Row(
+                                      //         children: [
+                                      //           Text("Phone Number: "),
+                                      //           Text(snapshot.data.documents[i]["Phone Number"]),
+                                      //           IconButton(
+                                      //             icon: Icon(Icons.auto_awesome_motion),
+                                      //             onPressed: (){
+                                      //               // Navigator.push(
+                                      //               //   context,
+                                      //               //   MaterialPageRoute(
+                                      //               //       builder: (context) =>
+                                      //               //           StudentEdit(snapshot
+                                      //               //               .data.documents[i])),
+                                      //               // );
+                                      //             },
+                                      //           )
+                                      //         ],
+                                      //       ),
+                                      //
+                                      //     ],
+                                      //   )
+                                      // ),
                                     ),
                                   ],
                                 ),
@@ -300,14 +321,6 @@ class _Home extends State<Home> {
                   // Then close the drawer
                 ),
 
-                ListTile(
-                  title: btc,
-                  onTap: () {
-                    // Update the state of the app
-                    // ...
-                    // Then close the drawer
-                  },
-                ),
                 ListTile(
                   title: request,
                   onTap: () {

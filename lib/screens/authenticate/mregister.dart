@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app2020/screens/authenticate/msign_in.dart';
 import 'package:app2020/screens/homescreen//mhome.dart';
 import 'package:flutter/material.dart';
@@ -178,11 +180,10 @@ class _MRegisterState extends State<MRegister> {
                   child: MaterialButton(
                     minWidth: MediaQuery.of(context).size.width*0.6,
                     padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
-                    onPressed: () async {
+                    onPressed: ()  async {
                       print(controller.text);
                       if (formkey.currentState.validate()) {
-                        //register .. send data  to authservices
-                        dynamic result = await _auth.regMech(email.text, pw.text, nm.text, gm.text, pn.text);
+                        dynamic result =  await _auth.regMech(email.text, pw.text, nm.text, gm.text, pn.text);
                         showDialog(
                           context: context,
                           barrierDismissible: false, // user must tap button!
@@ -199,8 +200,8 @@ class _MRegisterState extends State<MRegister> {
                               actions: <Widget>[
                                 TextButton(
                                   child: Text('OK'),
-                                  onPressed: () async {
-                                    dynamic result = await _auth.signOut();
+                                  onPressed: () async  {
+                                    await _auth.signOut();
                                     if (result == null) {
                                       int i = 1;
                                       print(i.toString());

@@ -161,7 +161,7 @@ class _MSignInState extends State<MSignIn> {
                           );
                         }
                         else if(result!= null){
-                          print("sdsds useruid  "+result.uid);
+                          // print("sdsds useruid  "+result.uid);
                           var document = await Firestore.instance.collection('USER')
                               .document(result.uid)
                               .get();

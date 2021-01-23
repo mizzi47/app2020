@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app2020/screens/authenticate/sign_in.dart';
 import 'package:app2020/screens/homescreen/home.dart';
 import 'package:flutter/material.dart';
@@ -198,7 +200,7 @@ class _RegisterState extends State<Register> {
                               TextButton(
                                 child: Text('OK'),
                                 onPressed: () async {
-                                  dynamic result = await _auth.signOut();
+                                  await _auth.signOut();
                                   if (result == null) {
                                     int i = 1;
                                     print(i.toString());
