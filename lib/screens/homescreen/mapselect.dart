@@ -1,8 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart' as a;
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:app2020/services/authservice.dart';
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+FirebaseUser user;
+TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+List<Marker> allMarkers = [];
+List<Marker> myMarker = [];
+LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
+Location _location = Location();
+final a.Geolocator geolocator = a.Geolocator()..forceAndroidLocationManager;
+a.Position _currentPosition;
+String _currentAddress;
+final AuthService _auth = AuthService();
+GoogleMapController _controller;
+double lat;
+double long;
 
 class MapS extends StatefulWidget {
   @override
@@ -10,14 +26,7 @@ class MapS extends StatefulWidget {
 }
 
 class _MapS extends State<MapS> {
-  List<Marker> allMarkers = [];
-  LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
-  Location _location = Location();
-  final a.Geolocator geolocator = a.Geolocator()..forceAndroidLocationManager;
-  a.Position _currentPosition;
-  String _currentAddress;
 
-  GoogleMapController _controller;
   void _onMapCreated(GoogleMapController _cntlr)
   {
     _controller = _cntlr;
@@ -65,6 +74,7 @@ class _MapS extends State<MapS> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    initUser();
     _getCurrentLocation();
     allMarkers.add(Marker(
         markerId: MarkerId('myMarker'),
@@ -75,51 +85,65 @@ class _MapS extends State<MapS> {
         position: LatLng(40.7128, -74.0060)));
   }
 
+  initUser() async {
+    user = await auth.currentUser();
+    print(user.email);
+    setState(() {});
+    //print(user.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    final savemap = Material(
+      elevation: 2.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Colors.purple,
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width * 0.6,
+        padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
+        onPressed: () {
+
+            _auth.updateMap(lat, long);
+        },
+        child: Text("Save Location",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Maps'),
       ),
       body: Stack(
           children: [Container(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height*0.8,
             width: MediaQuery.of(context).size.width,
             child: GoogleMap(
               initialCameraPosition: CameraPosition(target: _initialcameraposition),
-              markers: Set.from(allMarkers),
+              markers: Set.from(myMarker),
               onMapCreated: mapCreated,
+              onTap: _handleTap,
             ),
           ),
             Align(
               alignment: Alignment.bottomCenter,
               child: InkWell(
-                // onTap: movetoMy,
                 child: Container(
                   height: 40.0,
-                  width: 40.0,
+                  width: 200.0,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20.0),
                       color: Colors.green
                   ),
-                  child: Icon(Icons.where_to_vote, color: Colors.white),
+                  child: savemap
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: InkWell(
-                // onTap: movetoNewYork,
-                child: Container(
-                  height: 40.0,
-                  width: 40.0,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.red
-                  ),
-                  child: Icon(Icons.backspace, color: Colors.white),
-                ),
-              ),
+            SizedBox(
+              height: 25.0,
             )
           ]
       ),
@@ -130,6 +154,23 @@ class _MapS extends State<MapS> {
     setState(() {
       _controller = controller;
     });
+  }
+
+  _handleTap(LatLng tappedPoint){
+    print(tappedPoint);
+    setState(() {
+        myMarker = [];
+        myMarker.add(Marker(
+          markerId: MarkerId(tappedPoint.toString()),
+          position: tappedPoint,
+          draggable: true,
+        ));
+    });
+    lat = tappedPoint.latitude;
+    long = tappedPoint.longitude;
+    print(lat);
+    print(long);
+
   }
 
   movetoBoston() {

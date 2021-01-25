@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:app2020/screens/homescreen/mappage.dart';
+import 'package:app2020/screens/homescreen/mapselect.dart';
 
 String userid;
 String role;
@@ -22,7 +22,7 @@ FirebaseUser user;
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 Position _currentPosition;
 String _currentAddress;
-
+final AuthService _auth = AuthService();
 
 class MHome extends StatefulWidget {
   final appTitle = 'SECURIDE';
@@ -40,18 +40,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
-  // String userid;
-  // String role;
-  // String name;
-  // String gname;
-  // String pnumber;
-  // String email;
-  // var document;
-  // final FirebaseAuth auth = FirebaseAuth.instance;
-  // FirebaseUser user;
-  // final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  // Position _currentPosition;
-  // String _currentAddress;
   _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
@@ -138,7 +126,6 @@ class SplashScreenState extends State<SplashScreen> {
 class _MHome extends State<MHome> {
 
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-  final AuthService _auth = AuthService();
 
   @override
   void initState() {
@@ -268,7 +255,7 @@ class _MHome extends State<MHome> {
         onPressed: () async{
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => MapP()),
+            MaterialPageRoute(builder: (context) => MapS()),
           );
         },
 

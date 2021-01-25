@@ -1,7 +1,4 @@
 import 'package:app2020/screens/Wrapper.dart';
-import 'package:app2020/screens/authenticate/register.dart';
-import 'package:app2020/screens/homescreen/home.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:app2020/services/authservice.dart';
@@ -37,10 +34,6 @@ class _SignInState extends State<SignIn> {
         minWidth: MediaQuery.of(context).size.width * 0.6,
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Register()),
-          ); //signup screen
         },
         child: Text("Register",
             textAlign: TextAlign.center,

@@ -25,11 +25,9 @@ class _Home extends State<Home> {
   String email;
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseUser user;
-  Future<FirebaseUser> testuser = FirebaseAuth.instance.currentUser();
-
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   final AuthService _auth = AuthService();
-  // final FirebaseUser user = await _auth.currentUser();
+
 
 
   @override

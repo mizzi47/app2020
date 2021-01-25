@@ -11,6 +11,7 @@ class AuthService {
   String email = "";
   String userid = "";
   String role = "";
+  FirebaseUser muser;
 
   //declare db user
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -58,6 +59,26 @@ class AuthService {
       await DatabaseService(uid: user.uid).updateMechAcc(email);
       await DatabaseService(uid: user.uid).updateMechData(nm, gm, pn);
       return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  updateMap(double lat, double long) async {
+    try {
+      muser = await _auth.currentUser();
+      await DatabaseService(uid: muser.uid).updateMap(lat, long);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  test() async {
+    try {
+      muser = await _auth.currentUser();
+      print(muser.email);
     } catch (e) {
       print(e.toString());
       return null;

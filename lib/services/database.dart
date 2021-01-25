@@ -33,6 +33,7 @@ class DatabaseService {
           'role': "mech"
         });
   }
+
   Future updateMechData(String nm, String gm, String pn) async {
     return await MechCollection.document(uid).setData(
         {
@@ -41,6 +42,14 @@ class DatabaseService {
           'Phone Number': pn,
           'role': "mech"
         });
+  }
+
+  Future updateMap(double lat, double long) async {
+    return await MechCollection.document(uid).setData(
+        {
+          'latitude': lat,
+          'longtitude': long
+        }, merge: true);
   }
 
 }
