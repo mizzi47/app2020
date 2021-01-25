@@ -14,7 +14,7 @@ class MWrapper extends StatelessWidget {
       return MSignIn();
     } else {
       // print(user.uid);
-      return MHome();
+      return SplashScreen();
     }
 
     //return Authenticate();

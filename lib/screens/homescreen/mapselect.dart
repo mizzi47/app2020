@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
-class MapP extends StatefulWidget {
+class MapS extends StatefulWidget {
   @override
-  _MapP createState() => _MapP();
+  _MapS createState() => _MapS();
 }
 
-class _MapP extends State<MapP> {
+class _MapS extends State<MapS> {
   List<Marker> allMarkers = [];
   LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
   Location _location = Location();
@@ -94,7 +94,7 @@ class _MapP extends State<MapP> {
             Align(
               alignment: Alignment.bottomCenter,
               child: InkWell(
-                onTap: movetoMy,
+                // onTap: movetoMy,
                 child: Container(
                   height: 40.0,
                   width: 40.0,
@@ -102,14 +102,14 @@ class _MapP extends State<MapP> {
                       borderRadius: BorderRadius.circular(20.0),
                       color: Colors.green
                   ),
-                  child: Icon(Icons.forward, color: Colors.white),
+                  child: Icon(Icons.where_to_vote, color: Colors.white),
                 ),
               ),
             ),
             Align(
-              alignment: Alignment.bottomRight,
+              alignment: Alignment.topLeft,
               child: InkWell(
-                onTap: movetoNewYork,
+                // onTap: movetoNewYork,
                 child: Container(
                   height: 40.0,
                   width: 40.0,
@@ -146,110 +146,7 @@ class _MapP extends State<MapP> {
 
   movetoMy() {
     _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 20.0),
+      CameraPosition(target: LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 12.0),
     ));
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:geolocator/geolocator.dart';
-//
-// class MapP extends StatefulWidget {
-//   @override
-//   _MapP createState() => _MapP();
-// }
-//
-// class _MapP extends State<MapP> {
-//   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-//   Position _currentPosition;
-//   String _currentAddress;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _getCurrentLocation();
-//   }
-//
-//   _getCurrentLocation() {
-//     geolocator
-//         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-//         .then((Position position) {
-//       setState(() {
-//         _currentPosition = position;
-//       });
-//
-//       _getAddressFromLatLng();
-//     }).catchError((e) {
-//       print(e);
-//     });
-//   }
-//
-//   _getAddressFromLatLng() async {
-//     try {
-//       List<Placemark> p = await geolocator.placemarkFromCoordinates(
-//           _currentPosition.latitude, _currentPosition.longitude);
-//
-//       Placemark place = p[0];
-//
-//       setState(() {
-//         _currentAddress =
-//         "${place.locality}, ${place.postalCode}, ${place.country}";
-//       });
-//     } catch (e) {
-//       print(e);
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("DASHBOARD"),
-//       ),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             Container(
-//                 decoration: BoxDecoration(
-//                   color: Theme.of(context).canvasColor,
-//                 ),
-//                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//                 child: Column(
-//                   children: <Widget>[
-//                     Row(
-//                       children: <Widget>[
-//                         Icon(Icons.location_on),
-//                         SizedBox(
-//                           width: 8,
-//                         ),
-//                         Expanded(
-//                           child: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: <Widget>[
-//                               Text(
-//                                 'Location',
-//                                 style: Theme.of(context).textTheme.caption,
-//                               ),
-//                               if (_currentPosition != null &&
-//                                   _currentAddress != null)
-//                                 Text(_currentAddress,
-//                                     style:
-//                                     Theme.of(context).textTheme.bodyText2),
-//                             ],
-//                           ),
-//                         ),
-//                         SizedBox(
-//                           width: 8,
-//                         ),
-//                       ],
-//                     ),
-//                   ],
-//                 ))
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

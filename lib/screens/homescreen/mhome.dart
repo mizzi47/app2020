@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app2020/screens/authenticate/msign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
@@ -6,6 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:app2020/screens/homescreen/mappage.dart';
+
+String userid;
+String role;
+String name;
+String gname;
+String pnumber;
+String email;
+var document;
+final FirebaseAuth auth = FirebaseAuth.instance;
+FirebaseUser user;
+final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+Position _currentPosition;
+String _currentAddress;
+
 
 class MHome extends StatefulWidget {
   final appTitle = 'SECURIDE';
@@ -14,20 +31,111 @@ class MHome extends StatefulWidget {
   _MHome createState() => _MHome();
 }
 
+class SplashScreen extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() {
+    return SplashScreenState();
+  }
+}
+
+class SplashScreenState extends State<SplashScreen> {
+  // String userid;
+  // String role;
+  // String name;
+  // String gname;
+  // String pnumber;
+  // String email;
+  // var document;
+  // final FirebaseAuth auth = FirebaseAuth.instance;
+  // FirebaseUser user;
+  // final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  // Position _currentPosition;
+  // String _currentAddress;
+  _getCurrentLocation() {
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        _currentAddress =
+        "${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+  initUser() async {
+    user = await auth.currentUser();
+    document = await Firestore.instance.collection('MECHDATA')
+        .document(user.uid)
+        .get();
+    _getCurrentLocation();
+    name = document.data['Name'].toString();
+    gname = document.data['Garage Name'].toString();
+    pnumber = document.data['Phone Number'].toString();
+    print(user.uid);
+    print(name);
+    print(pnumber);
+    // _MHome().name = name;
+    // _MHome().gname = gname;
+    // _MHome().pnumber = pnumber;
+    setState(() {});
+    //print(user.uid);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initUser();
+    loadData();
+  }
+
+
+  Future<Timer> loadData() async {
+    return new Timer(Duration(seconds: 5), onDoneLoading);
+
+  }
+
+  onDoneLoading() async {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MHome()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage('assets/mg.jpg'),
+            fit: BoxFit.cover
+        ) ,
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+        ),
+      ),
+    );
+  }
+}
+
 class _MHome extends State<MHome> {
-  String userid;
-  String role;
-  String name;
-  String gname;
-  String pnumber;
-  String email;
-  var document;
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseUser user;
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  Position _currentPosition;
-  String _currentAddress;
-  // Future<FirebaseUser> testuser = FirebaseAuth.instance.currentUser();
 
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   final AuthService _auth = AuthService();
@@ -41,33 +149,8 @@ class _MHome extends State<MHome> {
 
   initUser() async {
     user = await auth.currentUser();
-    document = await Firestore.instance.collection('MECHDATA')
-        .document(user.uid)
-        .get();
-    name = document.data['Name'].toString();
-    gname = document.data['Garage Name'].toString();
-    pnumber = document.data['Phone Number'].toString();
-    print(user.uid);
-    print(name);
-    print(pnumber);
+    print(name+"fddfd");
     setState(() {});
-    //print(user.uid);
-  }
-
-  showAlertDialog(BuildContext context){
-    AlertDialog alert=AlertDialog(
-      content: new Row(
-        children: [
-          CircularProgressIndicator(),
-          Container(margin: EdgeInsets.only(left: 5),child:Text("Loading" )),
-        ],),
-    );
-    showDialog(barrierDismissible: false,
-      context:context,
-      builder:(BuildContext context){
-        return alert;
-      },
-    );
   }
 
     _getCurrentLocation() {
@@ -105,7 +188,7 @@ class _MHome extends State<MHome> {
 
     final shome = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
+      borderRadius: BorderRadius.circular( 15.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
@@ -128,7 +211,7 @@ class _MHome extends State<MHome> {
 
     final edit = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
+      borderRadius: BorderRadius.circular(15.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
@@ -146,7 +229,7 @@ class _MHome extends State<MHome> {
       borderRadius: BorderRadius.circular(30.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
+        minWidth: MediaQuery.of(context).size.width * 0.6,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async{
           print(_currentAddress);
@@ -166,6 +249,30 @@ class _MHome extends State<MHome> {
             }
           }
         },
+
+
+        child: Text("Update profile",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
+    final updmap = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Colors.lightGreen,
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width * 0.6,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () async{
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MapP()),
+          );
+        },
+
+
         child: Text("Update profile",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -207,7 +314,17 @@ class _MHome extends State<MHome> {
         ),
         body: Column(
           children: [
-            Center(child: Text('Your Garage Dashboard')),
+            Card(
+              color: Colors.grey,
+              child: ListTile(
+                title: Text(
+                  "YOUR GARAGE",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
             Column(
 
               mainAxisAlignment: MainAxisAlignment.center,
@@ -215,9 +332,6 @@ class _MHome extends State<MHome> {
               children: <Widget>[
                 SizedBox(
                   height: 50.0,
-                ),
-                CircleAvatar(
-                  radius: 60.0,
                 ),
                 Text(
                   gname,
@@ -290,6 +404,10 @@ class _MHome extends State<MHome> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 25.0,
+                ),
+                updmap,
                 SizedBox(
                   height: 25.0,
                 ),

@@ -121,13 +121,17 @@ class _Home extends State<Home> {
         minWidth: MediaQuery.of(context).size.width * 0.3,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          Navigator.pushAndRemoveUntil(
+          Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => MapP(),
-            ),
-                (route) => false,
+            MaterialPageRoute(builder: (context) => MapP()),
           );
+          // Navigator.pushAndRemoveUntil(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (BuildContext context) => MapP(),
+          //   ),
+          //       (route) => false,
+          // );
         },
         child: Text("Request",
             textAlign: TextAlign.center,
