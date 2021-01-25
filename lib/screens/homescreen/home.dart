@@ -3,9 +3,11 @@ import 'package:app2020/screens/authenticate/sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app2020/screens/homescreen/mappage.dart';
 import 'package:flutter/material.dart';
 import 'package:app2020/connect.dart';
 import 'package:provider/provider.dart';
+import 'package:splashscreen/splashscreen.dart';
 
 import '../Wrapper.dart';
 
@@ -42,6 +44,22 @@ class _Home extends State<Home> {
     //print(user.uid);
   }
 
+  showAlertDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 5),child:Text("Loading" )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,30 +81,6 @@ class _Home extends State<Home> {
           );
         },
         child: Text("Home",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-      ),
-    );
-
-
-    final btc = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => connect(),
-            ),
-                (route) => false,
-          );
-        },
-        child: Text("ArduinoConnect",
             textAlign: TextAlign.center,
             style: style.copyWith(
                 color: Colors.white, fontWeight: FontWeight.bold)),
@@ -127,6 +121,13 @@ class _Home extends State<Home> {
         minWidth: MediaQuery.of(context).size.width * 0.3,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => MapP(),
+            ),
+                (route) => false,
+          );
         },
         child: Text("Request",
             textAlign: TextAlign.center,
@@ -140,7 +141,6 @@ class _Home extends State<Home> {
           .collection("MECHDATA")
           .snapshots();
     }
-
 
     Size size = MediaQuery.of(context).size;
 
@@ -157,12 +157,6 @@ class _Home extends State<Home> {
             SizedBox(height: 15.0),
             Center(child: Text('Mechanics List', textAlign: TextAlign.center,
                 style: style)),
-            // RaisedButton(
-            //     child: Text("Logout"),
-            //     onPressed: () async {
-            //         getData();
-            //     }
-            // ),
             SizedBox(height: 20.0),
             Container(
               height: size.height * 0.8,

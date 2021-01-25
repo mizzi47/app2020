@@ -50,6 +50,22 @@ class _MSignInState extends State<MSignIn> {
       ),
     );
 
+    showAlertDialog(BuildContext context){
+      AlertDialog alert=AlertDialog(
+        content: new Row(
+          children: [
+            CircularProgressIndicator(),
+            Container(margin: EdgeInsets.only(left: 5),child:Text("Loading" )),
+          ],),
+      );
+      showDialog(barrierDismissible: false,
+        context:context,
+        builder:(BuildContext context){
+          return alert;
+        },
+      );
+    }
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Container(
@@ -132,9 +148,11 @@ class _MSignInState extends State<MSignIn> {
                     minWidth: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () async {
+                      showAlertDialog(context);
                       if (formkey.currentState.validate()) {
                         dynamic result = await _auth.signInUser(email.text, pw.text);
                         if (result == null) {
+                          Navigator.pop(context);
                           showDialog(
                             context: context,
                             barrierDismissible: false, // user must tap button!
@@ -168,6 +186,7 @@ class _MSignInState extends State<MSignIn> {
                           if(document!=null){
                             String role = document.data['role'].toString();
                             if(role == 'mech'){
+                              Navigator.pop(context);
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
@@ -178,6 +197,7 @@ class _MSignInState extends State<MSignIn> {
                             }
                             else if(role == 'user'){
                               await _auth.signOut();
+                              Navigator.pop(context);
                               showDialog(
                                 context: context,
                                 barrierDismissible: false, // user must tap button!

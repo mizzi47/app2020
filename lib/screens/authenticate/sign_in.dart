@@ -49,6 +49,23 @@ class _SignInState extends State<SignIn> {
       ),
     );
 
+    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+    showAlertDialog(BuildContext context){
+      AlertDialog alert=AlertDialog(
+        content: new Row(
+          children: [
+            CircularProgressIndicator(),
+            Container(margin: EdgeInsets.only(left: 5),child:Text("Loading" )),
+          ],),
+      );
+      showDialog(barrierDismissible: false,
+        context:context,
+        builder:(BuildContext context){
+          return alert;
+        },
+      );
+    }
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: Container(
@@ -133,8 +150,10 @@ class _SignInState extends State<SignIn> {
                     onPressed: () async {
                       //_auth.getData();
                       if (formkey.currentState.validate()) {
+                        showAlertDialog(context);
                         dynamic result = await _auth.signInUser(email.text, pw.text);
                         if (result == null) {
+                          Navigator.pop(context);
                             showDialog(
                               context: context,
                               barrierDismissible: false, // user must tap button!
@@ -169,6 +188,7 @@ class _SignInState extends State<SignIn> {
                             String role = document.data['role'].toString();
                             //print(role);
                             if(role == 'user'){
+                              Navigator.pop(context);
                               Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(

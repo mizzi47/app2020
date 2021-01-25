@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:app2020/screens/authenticate/msign_in.dart';
 import 'package:app2020/screens/homescreen//mhome.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:app2020/shared/constants.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 class MRegister extends StatefulWidget {
 
@@ -19,6 +17,7 @@ class MRegister extends StatefulWidget {
 
 class _MRegisterState extends State<MRegister> {
 
+
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   final AuthService _auth = AuthService();
   final formkey = GlobalKey<FormState>();
@@ -29,8 +28,6 @@ class _MRegisterState extends State<MRegister> {
   TextEditingController pn =new  TextEditingController();
   final TextEditingController controller = TextEditingController();
   String initialCountry = 'NG';
-  PhoneNumber number = PhoneNumber(isoCode: 'NG');
-
 
   @override
   Widget build(BuildContext context) {
@@ -271,13 +268,6 @@ class _MRegisterState extends State<MRegister> {
     );
 
   }
-  void getPhoneNumber(String phoneNumber) async {
-    PhoneNumber number =
-    await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber, 'US');
 
-    setState(() {
-      this.number = number;
-    });
-  }
 }
 

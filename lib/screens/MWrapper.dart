@@ -13,7 +13,7 @@ class MWrapper extends StatelessWidget {
     if(user == null){
       return MSignIn();
     } else {
-      print(user.uid);
+      // print(user.uid);
       return MHome();
     }
 

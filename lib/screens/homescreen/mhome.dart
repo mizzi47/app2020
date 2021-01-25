@@ -1,11 +1,11 @@
-import 'package:app2020/models/user.dart';
 import 'package:app2020/screens/authenticate/msign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:app2020/connect.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MHome extends StatefulWidget {
   final appTitle = 'SECURIDE';
@@ -17,10 +17,17 @@ class MHome extends StatefulWidget {
 class _MHome extends State<MHome> {
   String userid;
   String role;
+  String name;
+  String gname;
+  String pnumber;
   String email;
+  var document;
   final FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseUser user;
-  Future<FirebaseUser> testuser = FirebaseAuth.instance.currentUser();
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  Position _currentPosition;
+  String _currentAddress;
+  // Future<FirebaseUser> testuser = FirebaseAuth.instance.currentUser();
 
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   final AuthService _auth = AuthService();
@@ -29,12 +36,68 @@ class _MHome extends State<MHome> {
   void initState() {
     super.initState();
     initUser();
+    _getCurrentLocation();
   }
 
   initUser() async {
     user = await auth.currentUser();
+    document = await Firestore.instance.collection('MECHDATA')
+        .document(user.uid)
+        .get();
+    name = document.data['Name'].toString();
+    gname = document.data['Garage Name'].toString();
+    pnumber = document.data['Phone Number'].toString();
+    print(user.uid);
+    print(name);
+    print(pnumber);
     setState(() {});
     //print(user.uid);
+  }
+
+  showAlertDialog(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(),
+          Container(margin: EdgeInsets.only(left: 5),child:Text("Loading" )),
+        ],),
+    );
+    showDialog(barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return alert;
+      },
+    );
+  }
+
+    _getCurrentLocation() {
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        _currentAddress =
+        "${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -78,9 +141,41 @@ class _MHome extends State<MHome> {
       ),
     );
 
-    final logout = Material(
+    final update = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
+      color: Color(0xff01A0C7),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () async{
+          print(_currentAddress);
+          print(user.uid);
+          print(user.email);
+          var docs = await Firestore.instance.collection('MECHDATA')
+              .document(user.uid)
+              .get();
+          if(docs == null){
+            print("no");
+          }
+          else{
+            print("yes");
+            if(docs!=null){
+              String role = docs.data['Name'].toString();
+              print(role);
+            }
+          }
+        },
+        child: Text("Update profile",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
+    final logout = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(15.0),
       color: Colors.red,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width * 0.3,
@@ -105,14 +200,104 @@ class _MHome extends State<MHome> {
     );
 
     return Scaffold(
+      backgroundColor: Colors.blueGrey,
         appBar: AppBar(
-          title: Text("Securide"),
+          title: Text("Rider Pocket Mechanic"),
           backgroundColor: Colors.indigo,
         ),
         body: Column(
           children: [
-            Center(child: Text('Current Customer Request')),
+            Center(child: Text('Your Garage Dashboard')),
+            Column(
+
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 50.0,
+                ),
+                CircleAvatar(
+                  radius: 60.0,
+                ),
+                Text(
+                  gname,
+                  style: TextStyle(
+                    fontFamily: 'Pacifico',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 32.0,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontFamily: 'SourceSansPro',
+                    fontSize: 18.0,
+                    letterSpacing: 2.5,
+                    color: Colors.blue.shade50,
+                  ),
+                ),
+                Container(
+                  width: 200.0,
+                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Divider(
+                    color: Colors.white,
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.phone,
+                      color: Colors.teal.shade400,
+                    ),
+                    title: Text(
+                      pnumber,
+                      style: TextStyle(
+                        color: Colors.teal.shade400,
+                      ),
+                    ),
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.email,
+                      color: Colors.teal.shade400,
+                    ),
+                    title: Text(
+                      user.email,
+                      style: TextStyle(
+                        color: Colors.teal.shade400,
+                      ),
+                    ),
+                  ),
+                ),
+
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.add_location_sharp,
+                      color: Colors.teal.shade400,
+                    ),
+                    title: Text(
+                      _currentAddress,
+                      style: TextStyle(
+                        color: Colors.teal.shade400,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 25.0,
+                ),`
+                update
+              ],
+            ),
           ],
+
         ),
         drawer: Theme(
           data: Theme.of(context).copyWith(
