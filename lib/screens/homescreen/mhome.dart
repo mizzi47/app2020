@@ -16,6 +16,8 @@ String name;
 String gname;
 String pnumber;
 String email;
+double lat;
+double long;
 var document;
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
@@ -23,6 +25,7 @@ final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 Position _currentPosition;
 String _currentAddress;
 final AuthService _auth = AuthService();
+
 
 class MHome extends StatefulWidget {
   final appTitle = 'SECURIDE';
@@ -40,24 +43,10 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
-  _getCurrentLocation() {
-    geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-
-      _getAddressFromLatLng();
-    }).catchError((e) {
-      print(e);
-    });
-  }
-
   _getAddressFromLatLng() async {
     try {
       List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
+          lat, long);
 
       Placemark place = p[0];
 
@@ -69,23 +58,23 @@ class SplashScreenState extends State<SplashScreen> {
       print(e);
     }
   }
+
   initUser() async {
     user = await auth.currentUser();
     document = await Firestore.instance.collection('MECHDATA')
         .document(user.uid)
         .get();
-    // _getCurrentLocation();
     name = document.data['Name'].toString();
     gname = document.data['Garage Name'].toString();
     pnumber = document.data['Phone Number'].toString();
+    lat = document.data['latitude'];
+    long = document.data['longtitude'];
+    _getAddressFromLatLng();
     print(user.uid);
     print(name);
     print(pnumber);
-    // _MHome().name = name;
-    // _MHome().gname = gname;
-    // _MHome().pnumber = pnumber;
-    setState(() {});
-    //print(user.uid);
+    print(lat);
+    print(long);
   }
 
   @override
@@ -93,6 +82,7 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     initUser();
     loadData();
+    setState(() {});
   }
 
 
@@ -131,33 +121,18 @@ class _MHome extends State<MHome> {
   void initState() {
     super.initState();
     initUser();
-    _getCurrentLocation();
+    _getAddressFromLatLng();
+    setState(() {});
   }
 
   initUser() async {
     user = await auth.currentUser();
-    print(name+"fddfd");
-    setState(() {});
-  }
-
-    _getCurrentLocation() {
-    geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-
-      _getAddressFromLatLng();
-    }).catchError((e) {
-      print(e);
-    });
   }
 
   _getAddressFromLatLng() async {
     try {
       List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
+          lat, long);
 
       Placemark place = p[0];
 

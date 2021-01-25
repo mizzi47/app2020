@@ -21,11 +21,11 @@ class _SignInState extends State<SignIn> {
   TextEditingController name = new TextEditingController();
   TextEditingController bname = new TextEditingController();
 
+
   @override
 
   Widget build(BuildContext context) {
-    // String email="";
-    //  String pw="";
+
     final registButton = Material(
       elevation: 2.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -43,6 +43,7 @@ class _SignInState extends State<SignIn> {
     );
 
     final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
     showAlertDialog(BuildContext context){
       AlertDialog alert=AlertDialog(
         content: new Row(

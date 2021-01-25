@@ -4,6 +4,7 @@ import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:app2020/services/authservice.dart';
+import 'package:app2020/screens/homescreen/mhome.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
@@ -83,12 +84,13 @@ class _MapS extends State<MapS> {
           print('Marker Tapped');
         },
         position: LatLng(40.7128, -74.0060)));
+    setState(() {});
   }
 
   initUser() async {
     user = await auth.currentUser();
     print(user.email);
-    setState(() {});
+
     //print(user.uid);
   }
 
@@ -103,7 +105,6 @@ class _MapS extends State<MapS> {
         minWidth: MediaQuery.of(context).size.width * 0.6,
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
         onPressed: () {
-
             _auth.updateMap(lat, long);
         },
         child: Text("Save Location",
@@ -122,7 +123,7 @@ class _MapS extends State<MapS> {
             height: MediaQuery.of(context).size.height*0.8,
             width: MediaQuery.of(context).size.width,
             child: GoogleMap(
-              initialCameraPosition: CameraPosition(target: _initialcameraposition),
+              initialCameraPosition: CameraPosition(target:LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 12.0),
               markers: Set.from(myMarker),
               onMapCreated: mapCreated,
               onTap: _handleTap,

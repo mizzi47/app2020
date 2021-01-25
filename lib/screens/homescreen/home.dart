@@ -30,11 +30,11 @@ class _Home extends State<Home> {
   void initState() {
     super.initState();
     initUser();
+    setState(() {});
   }
 
   initUser() async {
     user = await auth.currentUser();
-    setState(() {});
     //print(user.uid);
   }
 
