@@ -74,7 +74,7 @@ class SplashScreenState extends State<SplashScreen> {
     document = await Firestore.instance.collection('MECHDATA')
         .document(user.uid)
         .get();
-    _getCurrentLocation();
+    // _getCurrentLocation();
     name = document.data['Name'].toString();
     gname = document.data['Garage Name'].toString();
     pnumber = document.data['Phone Number'].toString();
@@ -260,7 +260,7 @@ class _MHome extends State<MHome> {
         },
 
 
-        child: Text("Update profile",
+        child: Text("Update Map",
             textAlign: TextAlign.center,
             style: style.copyWith(
                 color: Colors.white, fontWeight: FontWeight.bold)),

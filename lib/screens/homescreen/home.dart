@@ -1,15 +1,11 @@
-import 'package:app2020/models/user.dart';
+
 import 'package:app2020/screens/authenticate/sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app2020/screens/homescreen/mappage.dart';
 import 'package:flutter/material.dart';
-import 'package:app2020/connect.dart';
-import 'package:provider/provider.dart';
-import 'package:splashscreen/splashscreen.dart';
 
-import '../Wrapper.dart';
 
 
 class Home extends StatefulWidget {
@@ -123,13 +119,6 @@ class _Home extends State<Home> {
             context,
             MaterialPageRoute(builder: (context) => MapP()),
           );
-          // Navigator.pushAndRemoveUntil(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (BuildContext context) => MapP(),
-          //   ),
-          //       (route) => false,
-          // );
         },
         child: Text("Request",
             textAlign: TextAlign.center,
@@ -213,7 +202,37 @@ class _Home extends State<Home> {
                                               ],
                                             ),
                                             trailing:
-                                            Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0)),
+                                            IconButton(icon: Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
+                                            onPressed: (){
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false, // user must tap button!
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(snapshot.data.documents[i]["Garage Name"]),
+                                                    content: SingleChildScrollView(
+                                                      child: ListBody(
+                                                        children: <Widget>[
+                                                          Text(snapshot.data.documents[i]["latitude"].toString()),
+                                                          Text(snapshot.data.documents[i]["longtitude"].toString())
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: Text('OK'),
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
+                                            ),
+
+                                        ),
                                       ),
 
                                       // child: Container(
