@@ -3,7 +3,6 @@ import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
 class MapP extends StatefulWidget {
   @override
   _MapP createState() => _MapP();
@@ -18,13 +17,13 @@ class _MapP extends State<MapP> {
   String _currentAddress;
 
   GoogleMapController _controller;
-  void _onMapCreated(GoogleMapController _cntlr)
-  {
+
+  void _onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
     _location.onLocationChanged.listen((l) {
       _controller.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 15),
+          CameraPosition(target: LatLng(l.latitude, l.longitude), zoom: 15),
         ),
       );
     });
@@ -53,13 +52,12 @@ class _MapP extends State<MapP> {
 
       setState(() {
         _currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
       });
     } catch (e) {
       print(e);
     }
   }
-
 
   @override
   void initState() {
@@ -81,48 +79,45 @@ class _MapP extends State<MapP> {
       appBar: AppBar(
         title: Text('Maps'),
       ),
-      body: Stack(
-          children: [Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(target: _initialcameraposition),
-              markers: Set.from(allMarkers),
-              onMapCreated: mapCreated,
-            ),
+      body: Stack(children: [
+        Container(
+          height: MediaQuery.of(context).size.height*0.5,
+          width: MediaQuery.of(context).size.width,
+          child: GoogleMap(
+            initialCameraPosition:
+                CameraPosition(target: _initialcameraposition),
+            markers: Set.from(allMarkers),
+            onMapCreated: mapCreated,
           ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: InkWell(
-                onTap: movetoMy,
-                child: Container(
-                  height: 40.0,
-                  width: 40.0,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.green
-                  ),
-                  child: Icon(Icons.forward, color: Colors.white),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: InkWell(
-                onTap: movetoNewYork,
-                child: Container(
-                  height: 40.0,
-                  width: 40.0,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.red
-                  ),
-                  child: Icon(Icons.backspace, color: Colors.white),
-                ),
-              ),
-            )
-          ]
-      ),
+        ),
+        // Align(
+        //   alignment: Alignment.bottomCenter,
+        //   child: InkWell(
+        //     onTap: movetoMy,
+        //     child: Container(
+        //       height: 40.0,
+        //       width: 40.0,
+        //       decoration: BoxDecoration(
+        //           borderRadius: BorderRadius.circular(20.0),
+        //           color: Colors.green),
+        //       child: Icon(Icons.forward, color: Colors.white),
+        //     ),
+        //   ),
+        // ),
+        // Align(
+        //   alignment: Alignment.bottomRight,
+        //   child: InkWell(
+        //     onTap: movetoNewYork,
+        //     child: Container(
+        //       height: 40.0,
+        //       width: 40.0,
+        //       decoration: BoxDecoration(
+        //           borderRadius: BorderRadius.circular(20.0), color: Colors.red),
+        //       child: Icon(Icons.backspace, color: Colors.white),
+        //     ),
+        //   ),
+        // )
+      ]),
     );
   }
 
@@ -132,21 +127,11 @@ class _MapP extends State<MapP> {
     });
   }
 
-  movetoBoston() {
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(42.3601, -71.0589), zoom: 14.0, bearing: 45.0, tilt: 45.0),
-    ));
-  }
-
-  movetoNewYork() {
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(40.7128, -74.0060), zoom: 12.0),
-    ));
-  }
-
   movetoMy() {
     _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 20.0),
+      CameraPosition(
+          target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+          zoom: 20.0),
     ));
   }
 }

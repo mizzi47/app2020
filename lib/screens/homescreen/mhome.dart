@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:app2020/screens/homescreen/mapselect.dart';
+import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/mapscreen/mapselect.dart';
 
 String userid;
 String role;

@@ -1,4 +1,7 @@
-import 'package:app2020/screens/Wrapper.dart';
+import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/Wrapper.dart';
+import 'package:app2020/screens/authenticate/register.dart';
+import 'package:app2020/screens/homescreen/home.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:app2020/services/authservice.dart';
@@ -7,12 +10,12 @@ class SignIn extends StatefulWidget {
   final Function toggleView;
 
   SignIn({this.toggleView});
+
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
-
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   final AuthService _auth = AuthService();
   final formkey = GlobalKey<FormState>();
@@ -21,11 +24,10 @@ class _SignInState extends State<SignIn> {
   TextEditingController name = new TextEditingController();
   TextEditingController bname = new TextEditingController();
 
-
   @override
-
   Widget build(BuildContext context) {
-
+    // String email="";
+    //  String pw="";
     final registButton = Material(
       elevation: 2.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -34,6 +36,10 @@ class _SignInState extends State<SignIn> {
         minWidth: MediaQuery.of(context).size.width * 0.6,
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
         onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Register()),
+          ); //signup screen
         },
         child: Text("Register",
             textAlign: TextAlign.center,
@@ -42,19 +48,21 @@ class _SignInState extends State<SignIn> {
       ),
     );
 
-    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-    showAlertDialog(BuildContext context){
-      AlertDialog alert=AlertDialog(
+    final GlobalKey<ScaffoldState> _scaffoldKey =
+        new GlobalKey<ScaffoldState>();
+    showAlertDialog(BuildContext context) {
+      AlertDialog alert = AlertDialog(
         content: new Row(
           children: [
             CircularProgressIndicator(),
-            Container(margin: EdgeInsets.only(left: 5),child:Text("Loading" )),
-          ],),
+            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
+          ],
+        ),
       );
-      showDialog(barrierDismissible: false,
-        context:context,
-        builder:(BuildContext context){
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
           return alert;
         },
       );
@@ -101,12 +109,12 @@ class _SignInState extends State<SignIn> {
                             hintText: "Email",
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(32.0))),
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter email';
-                              }
-                              return null;
-                            },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter email';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: 25.0),
                       TextFormField(
@@ -121,12 +129,12 @@ class _SignInState extends State<SignIn> {
                             hintText: "Password",
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(32.0))),
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter password';
-                              }
-                              return null;
-                            },
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please enter password';
+                          }
+                          return null;
+                        },
                       ),
                     ],
                   ),
@@ -148,61 +156,60 @@ class _SignInState extends State<SignIn> {
                         dynamic result = await _auth.signInUser(email.text, pw.text);
                         if (result == null) {
                           Navigator.pop(context);
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false, // user must tap button!
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Invalid email/password'),
-                                  content: SingleChildScrollView(
-                                    child: ListBody(
-                                      children: <Widget>[
-                                        Text('Email or password is not match'),
-                                      ],
-                                    ),
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false, // user must tap button!
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Invalid email/password'),
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: <Widget>[
+                                      Text('Email or password is not match'),
+                                    ],
                                   ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('OK'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                        }
-                        else if(result!= null){
-                          print("sdsds   "+result.uid);
-                          var document = await Firestore.instance.collection('USER')
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else if (result != null) {
+                          var document = await Firestore.instance
+                              .collection('USER')
                               .document(result.uid)
                               .get();
-                          if(document!=null){
+                          if (document != null) {
                             String role = document.data['role'].toString();
-                            //print(role);
-                            if(role == 'user'){
+                            if (role == 'user') {
                               Navigator.pop(context);
                               Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) => Wrapper(),
-                                      ),
-                                          (route) => false,
-                                    );
-                                  }
-                            else if(role == 'mech'){
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => Wrapper(),
+                                ),
+                                (route) => false,
+                              );
+                            } else if (role == 'mech') {
                               await _auth.signOut();
                               showDialog(
                                 context: context,
-                                barrierDismissible: false, // user must tap button!
+                                barrierDismissible: false,
+                                // user must tap button!
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text('Invalid email/password'),
                                     content: SingleChildScrollView(
                                       child: ListBody(
                                         children: <Widget>[
-                                          Text('Email or password is not match'),
+                                          Text(
+                                              'Email or password is not match'),
                                         ],
                                       ),
                                     ),
@@ -218,7 +225,7 @@ class _SignInState extends State<SignIn> {
                                 },
                               );
                             }
-                            }
+                          }
                         }
                       }
                     },

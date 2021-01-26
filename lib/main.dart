@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app2020/models/user.dart';
-import 'package:app2020/screens/Wrapper.dart';
+import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/Wrapper.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';

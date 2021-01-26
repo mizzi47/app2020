@@ -117,7 +117,7 @@ class _RegisterState extends State<Register> {
                             filled: true,
                             fillColor: Colors.white,
                             contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Bike name",
+                            hintText: "Name",
                             border:
                             OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
                       ),
@@ -125,7 +125,7 @@ class _RegisterState extends State<Register> {
                       TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
-                            return 'Please enter bike name';
+                            return 'Please enter Bike name';
                           }
                           return null;
                         },
@@ -136,7 +136,7 @@ class _RegisterState extends State<Register> {
                             filled: true,
                             fillColor: Colors.white,
                             contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Name",
+                            hintText: "Bike Name",
                             border:
                             OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
                       ),
@@ -181,7 +181,6 @@ class _RegisterState extends State<Register> {
                     onPressed: () async {
                       print(controller.text);
                     if (formkey.currentState.validate()) {
-                      //register .. send data  to authservices
                       dynamic result = await _auth.regUser(email.text, pw.text, nm.text, bm.text, pn.text);
                       showDialog(
                         context: context,

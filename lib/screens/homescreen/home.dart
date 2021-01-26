@@ -1,29 +1,93 @@
-
+import 'dart:async';
 import 'package:app2020/screens/authenticate/sign_in.dart';
+import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/mapscreen/mappage.dart';
+import 'package:app2020/screens/homescreen/mhome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:app2020/screens/homescreen/mappage.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_launcher/map_launcher.dart';
 
-
+var document;
+String name;
+final FirebaseAuth auth = FirebaseAuth.instance;
+FirebaseUser user;
+String uemail;
+final AuthService _auth = AuthService();
 
 class Home extends StatefulWidget {
-  final appTitle = 'SECURIDE';
-
+  final appTitle = 'Rider Pocket Mechanic';
   @override
   _Home createState() => _Home();
 }
 
+class SplashScreen extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() {
+    return SplashScreenState();
+  }
+}
+
+class SplashScreenState extends State<SplashScreen> {
+
+  initUser() async {
+    user = await auth.currentUser();
+    print("init  "+user.uid);
+    print("init  "+user.email);
+    uemail = user.email;
+    print("uEmail  "+uemail);
+    document = await Firestore.instance.collection('CLIENTDATA')
+        .document(user.uid)
+        .get();
+    name = document.data['Name'].toString();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initUser();
+    loadData();
+    setState(() {});
+  }
+
+
+  Future<Timer> loadData() async {
+    return new Timer(Duration(seconds: 5), onDoneLoading);
+
+  }
+
+  onDoneLoading() async {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Home()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage('assets/bg2.jpg'),
+            fit: BoxFit.cover
+        ) ,
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+        ),
+      ),
+    );
+  }
+}
+
 class _Home extends State<Home> {
+  List<Marker> myMarker = [];
   String userid;
   String role;
-  String email;
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseUser user;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-  final AuthService _auth = AuthService();
-
+  GoogleMapController _controller;
+  Position ps;
 
 
   @override
@@ -35,7 +99,6 @@ class _Home extends State<Home> {
 
   initUser() async {
     user = await auth.currentUser();
-    //print(user.uid);
   }
 
   showAlertDialog(BuildContext context){
@@ -54,6 +117,11 @@ class _Home extends State<Home> {
     );
   }
 
+  void mapCreated(controller) {
+    setState(() {
+      _controller = controller;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,10 +183,7 @@ class _Home extends State<Home> {
         minWidth: MediaQuery.of(context).size.width * 0.3,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MapP()),
-          );
+          print(uemail);
         },
         child: Text("Request",
             textAlign: TextAlign.center,
@@ -204,31 +269,62 @@ class _Home extends State<Home> {
                                             trailing:
                                             IconButton(icon: Icon(Icons.keyboard_arrow_right, color: Colors.white, size: 30.0),
                                             onPressed: (){
-                                              showDialog(
-                                                context: context,
-                                                barrierDismissible: false, // user must tap button!
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: Text(snapshot.data.documents[i]["Garage Name"]),
-                                                    content: SingleChildScrollView(
-                                                      child: ListBody(
-                                                        children: <Widget>[
-                                                          Text(snapshot.data.documents[i]["latitude"].toString()),
-                                                          Text(snapshot.data.documents[i]["longtitude"].toString())
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: Text('OK'),
-                                                        onPressed: () {
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => MapP()),
                                               );
+                                              // myMarker.add(Marker(
+                                              //     markerId: MarkerId(snapshot.data.documents[i]["Garage Name"]),
+                                              //     draggable: true,
+                                              //     onTap: () {
+                                              //     },
+                                              //     position: LatLng(snapshot.data.documents[i]["latitude"], snapshot.data.documents[i]["longtitude"])));
+                                              // showDialog(
+                                              //   context: context,
+                                              //   barrierDismissible: false, // user must tap button!
+                                              //   builder: (BuildContext context) {
+                                              //     return AlertDialog(
+                                              //       title: Text(snapshot.data.documents[i]["Garage Name"]),
+                                              //       content: SingleChildScrollView(
+                                              //         child: ListBody(
+                                              //           children: <Widget>[
+                                              //             Text(snapshot.data.documents[i]["latitude"].toString()),
+                                              //             Text(snapshot.data.documents[i]["longtitude"].toString()),
+                                              //             Container(
+                                              //               height: MediaQuery.of(context).size.height*0.5,
+                                              //               width: MediaQuery.of(context).size.width,
+                                              //               child: GoogleMap(
+                                              //                 initialCameraPosition: CameraPosition(target:LatLng(snapshot.data.documents[i]["latitude"], snapshot.data.documents[i]["longtitude"]), zoom: 15.0),
+                                              //                 onMapCreated: mapCreated,
+                                              //                 markers: Set.from(myMarker),
+                                              //               ),
+                                              //             ),
+                                              //           ],
+                                              //         ),
+                                              //       ),
+                                              //       actions: <Widget>[
+                                              //         TextButton(
+                                              //           child: Text('OK'),
+                                              //           onPressed: () {
+                                              //             Navigator.of(context).pop();
+                                              //           },
+                                              //         ),
+                                              //         TextButton(
+                                              //           child: Text('Route'),
+                                              //           onPressed: () async{
+                                              //             final availableMaps = await MapLauncher.installedMaps;
+                                              //             print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
+                                              //
+                                              //             await availableMaps.first.showMarker(
+                                              //               coords: Coords(snapshot.data.documents[i]["latitude"], snapshot.data.documents[i]["longtitude"]),
+                                              //               title: snapshot.data.documents[i]["Garage Name"],
+                                              //             );
+                                              //           },
+                                              //         ),
+                                              //       ],
+                                              //     );
+                                              //   },
+                                              // );
                                             }
                                             ),
 

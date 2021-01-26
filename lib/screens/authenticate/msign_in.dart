@@ -1,5 +1,5 @@
 import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/authenticate/mregister.dart';
-import 'package:app2020/screens/MWrapper.dart';
+import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/MWrapper.dart';
 import 'package:app2020/screens/homescreen/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';

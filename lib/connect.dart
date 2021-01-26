@@ -1,7 +1,7 @@
 // For performing some operations asynchronously
 import 'dart:async';
 import 'dart:convert';
-import 'package:app2020/screens/Wrapper.dart';
+import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/Wrapper.dart';
 import 'package:app2020/screens/authenticate/sign_in.dart';
 
 // For using PlatformException

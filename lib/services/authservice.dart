@@ -1,12 +1,9 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app2020/models/user.dart';
 import 'package:app2020/services/database.dart';
 
-
 class AuthService {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String email = "";
   String userid = "";
@@ -20,8 +17,7 @@ class AuthService {
 
   //stream user
   Stream<User> get user {
-    return _auth.onAuthStateChanged
-        .map(_userFromFirebaseUser);
+    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
   }
 
   Future signInAnon() async {
@@ -35,8 +31,8 @@ class AuthService {
     }
   }
 
-  Future regUser(String email, String password, String nm, String bm,
-      String pn) async {
+  Future regUser(
+      String email, String password, String nm, String bm, String pn) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -50,8 +46,8 @@ class AuthService {
     }
   }
 
-  Future regMech(String email, String password, String nm, String gm,
-      String pn) async {
+  Future regMech(
+      String email, String password, String nm, String gm, String pn) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -97,7 +93,6 @@ class AuthService {
     }
   }
 
-
   Future signOut() async {
     try {
       return await _auth.signOut();
@@ -107,20 +102,15 @@ class AuthService {
     }
   }
 
-
-  //Future getData() async {
-    //userid = (await FirebaseAuth.instance.currentUser()).uid;
-    // email = (await FirebaseAuth.instance.currentUser()).email;
-    // await DatabaseService(uid: userid).complain(em, date, userid);
-    // var document = await Firestore.instance.collection('USER')
-    //     .document(userid)
-    //     .get();
-    // role = document.data['role'].toString();
-    // return email;
-   // print(userid);
-  //}
+//Future getData() async {
+//userid = (await FirebaseAuth.instance.currentUser()).uid;
+// email = (await FirebaseAuth.instance.currentUser()).email;
+// await DatabaseService(uid: userid).complain(em, date, userid);
+// var document = await Firestore.instance.collection('USER')
+//     .document(userid)
+//     .get();
+// role = document.data['role'].toString();
+// return email;
+// print(userid);
+//}
 }
-
-
-
-

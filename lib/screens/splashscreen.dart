@@ -1,4 +1,4 @@
-import 'package:app2020/screens/MWrapper.dart';
+import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/MWrapper.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 class SplashScreen extends StatefulWidget {
