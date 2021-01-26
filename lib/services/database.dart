@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 class DatabaseService {
   final String uid;
 
   DatabaseService({this.uid});
 
-  final CollectionReference UserCollection = Firestore.instance.collection('USER');
-  final CollectionReference ClientCollection = Firestore.instance.collection('CLIENTDATA');
-  final CollectionReference MechCollection = Firestore.instance.collection('MECHDATA');
+  final CollectionReference UserCollection =
+      Firestore.instance.collection('USER');
+  final CollectionReference ClientCollection =
+      Firestore.instance.collection('CLIENTDATA');
+  final CollectionReference MechCollection =
+      Firestore.instance.collection('MECHDATA');
+
 
   Future updateUserAcc(String em) async {
     return await UserCollection.document(uid)
@@ -36,5 +41,9 @@ class DatabaseService {
   Future reqMech(String mid) async {
     return await ClientCollection.document(uid)
         .setData({'request': mid, 'status': "WAITING"}, merge: true);
+  }
+
+  Future addToMech(String mid, String name, String bname, String pnum) async {
+    return await MechCollection.document(uid).collection("request").document(mid).setData({'status': "waiting", 'Name': name, 'Bike Name': bname, 'Phone Number': pnum});
   }
 }

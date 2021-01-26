@@ -45,7 +45,7 @@ class _SignInState extends State<SignIn> {
       ),
     );
 
-        showAlertDialog(BuildContext context) {
+    showAlertDialog(BuildContext context) {
           AlertDialog alert = AlertDialog(
             content: new Row(
               children: [

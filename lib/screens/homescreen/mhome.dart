@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:app2020/screens/authenticate/msign_in.dart';
+import 'package:app2020/screens/homescreen/mrequest.dart';
 import 'package:app2020/screens/mapscreen/mapselect.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
@@ -22,7 +23,6 @@ final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 String _currentAddress;
 final AuthService _auth = AuthService();
 
-
 class MHome extends StatefulWidget {
   final appTitle = 'SECURIDE';
 
@@ -31,7 +31,6 @@ class MHome extends StatefulWidget {
 }
 
 class SplashScreen extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return SplashScreenState();
@@ -41,14 +40,13 @@ class SplashScreen extends StatefulWidget {
 class SplashScreenState extends State<SplashScreen> {
   _getAddressFromLatLng() async {
     try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          lat, long);
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(lat, long);
 
       Placemark place = p[0];
 
       setState(() {
         _currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
       });
     } catch (e) {
       print(e);
@@ -57,7 +55,8 @@ class SplashScreenState extends State<SplashScreen> {
 
   initUser() async {
     user = await auth.currentUser();
-    document = await Firestore.instance.collection('MECHDATA')
+    document = await Firestore.instance
+        .collection('MECHDATA')
         .document(user.uid)
         .get();
     name = document.data['Name'].toString();
@@ -81,14 +80,13 @@ class SplashScreenState extends State<SplashScreen> {
     setState(() {});
   }
 
-
   Future<Timer> loadData() async {
     return new Timer(Duration(seconds: 3), onDoneLoading);
-
   }
 
   onDoneLoading() async {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MHome()));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => MHome()));
   }
 
   @override
@@ -96,9 +94,7 @@ class SplashScreenState extends State<SplashScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage('assets/mg.jpg'),
-            fit: BoxFit.cover
-        ) ,
+            image: AssetImage('assets/mg.jpg'), fit: BoxFit.cover),
       ),
       child: Center(
         child: CircularProgressIndicator(
@@ -110,7 +106,6 @@ class SplashScreenState extends State<SplashScreen> {
 }
 
 class _MHome extends State<MHome> {
-
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
   @override
@@ -127,14 +122,13 @@ class _MHome extends State<MHome> {
 
   _getAddressFromLatLng() async {
     try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          lat, long);
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(lat, long);
 
       Placemark place = p[0];
 
       setState(() {
         _currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
       });
     } catch (e) {
       print(e);
@@ -143,41 +137,40 @@ class _MHome extends State<MHome> {
 
   Future<bool> _onBackPressed() {
     return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit the App'),
-        actions: <Widget>[
-          new GestureDetector(
-            onTap: () => Navigator.of(context).pop(false),
-            child: Text("NO"),
-          ),
-          SizedBox(height: 16),
-          new GestureDetector(
-            onTap: () {
-              auth.signOut();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => MSignIn(),
-                ),
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit the App'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: Text("NO"),
+              ),
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () {
+                  auth.signOut();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => MSignIn(),
+                    ),
                     (route) => false,
-              );
-            },
-            child: Text("YES"),
+                  );
+                },
+                child: Text("YES"),
+              ),
+            ],
           ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
   @override
   Widget build(BuildContext context) {
-
     final shome = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular( 15.0),
+      borderRadius: BorderRadius.circular(15.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
@@ -188,7 +181,7 @@ class _MHome extends State<MHome> {
             MaterialPageRoute(
               builder: (BuildContext context) => MHome(),
             ),
-                (route) => false,
+            (route) => false,
           );
         },
         child: Text("Home",
@@ -198,14 +191,19 @@ class _MHome extends State<MHome> {
       ),
     );
 
-    final edit = Material(
+    final mreq = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(15.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Mrsplash()),
+          );
+        },
         child: Text("Customer Request",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -220,26 +218,8 @@ class _MHome extends State<MHome> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width * 0.6,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async{
-          print(_currentAddress);
-          print(user.uid);
-          print(user.email);
-          var docs = await Firestore.instance.collection('MECHDATA')
-              .document(user.uid)
-              .get();
-          if(docs == null){
-            print("no");
-          }
-          else{
-            print("yes");
-            if(docs!=null){
-              String role = docs.data['Name'].toString();
-              print(role);
-            }
-          }
+        onPressed: () async {
         },
-
-
         child: Text("Update profile",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -254,14 +234,12 @@ class _MHome extends State<MHome> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width * 0.6,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async{
+        onPressed: () async {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => MapSplash()),
           );
         },
-
-
         child: Text("Update Map",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -278,13 +256,13 @@ class _MHome extends State<MHome> {
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
           dynamic result = await _auth.signOut();
-          if(result == null) {
+          if (result == null) {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
                 builder: (BuildContext context) => MSignIn(),
               ),
-                  (route) => false,
+              (route) => false,
             );
           }
         },
@@ -298,7 +276,8 @@ class _MHome extends State<MHome> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-        backgroundColor: Colors.blueGrey,
+          resizeToAvoidBottomPadding: false,
+          backgroundColor: Colors.blueGrey,
           appBar: AppBar(
             title: Text("Rider Pocket Mechanic"),
             backgroundColor: Colors.indigo,
@@ -317,7 +296,6 @@ class _MHome extends State<MHome> {
                 ),
               ),
               Column(
-
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -350,7 +328,8 @@ class _MHome extends State<MHome> {
                     ),
                   ),
                   Card(
-                    margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    margin:
+                        EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.phone,
@@ -365,7 +344,8 @@ class _MHome extends State<MHome> {
                     ),
                   ),
                   Card(
-                    margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    margin:
+                        EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.email,
@@ -379,9 +359,9 @@ class _MHome extends State<MHome> {
                       ),
                     ),
                   ),
-
                   Card(
-                    margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    margin:
+                        EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.add_location_sharp,
@@ -406,7 +386,6 @@ class _MHome extends State<MHome> {
                 ],
               ),
             ],
-
           ),
           drawer: Theme(
             data: Theme.of(context).copyWith(
@@ -415,55 +394,33 @@ class _MHome extends State<MHome> {
               //other styles
             ),
             child: Drawer(
-              // Add a ListView to the drawer. This ensures the user can scroll
-              // through the options in the drawer if there isn't enough vertical
-              // space to fit everything.
               child: ListView(
-                // Important: Remove any padding from the ListView.
                 padding: EdgeInsets.zero,
                 children: <Widget>[
                   UserAccountsDrawerHeader(
-                      accountName: null,
-                    accountEmail: Text("Login As : "+"${user?.email}"),
-                    currentAccountPicture:
-                    Image.asset(
+                    accountName: null,
+                    accountEmail: Text("Login As : " + "${user?.email}"),
+                    currentAccountPicture: Image.asset(
                       "assets/logo.png",
                       fit: BoxFit.contain,
                     ),
-                      ),
-                  // DrawerHeader(
-                  //   decoration: BoxDecoration(
-                  //       color: Colors.purple,
-                  //       image: DecorationImage(
-                  //           image: AssetImage("assets/logo.png"),
-                  //           fit: BoxFit.cover)
-                  //   ),
-                  //
-                  // ),
+                  ),
                   ListTile(
                     title: shome,
                     onTap: () {
-                      // Update the state of the app
-                      // ...
-                      // Then close the drawer
                       Navigator.pop(context);
                     },
-                    // ...
-                    // Then close the drawer
                   ),
                   ListTile(
-                    title: edit,
+                    title: mreq,
                     onTap: () {
-                      // Update the state of the app
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     title: logout,
                     onTap: () {
-                      // Update the state of the app
-                      // ...
-                      // Then close the drawer
+                      Navigator.pop(context);
                     },
                   ),
                 ],

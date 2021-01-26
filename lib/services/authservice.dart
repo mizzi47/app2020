@@ -80,10 +80,10 @@ class AuthService {
     }
   }
 
-  test() async {
+  addToMech(String mid, String name, String bname, String pnum) async {
     try {
       muser = await _auth.currentUser();
-      print(muser.email);
+      await DatabaseService(uid: mid).addToMech(muser.uid, name, bname, pnum);
     } catch (e) {
       print(e.toString());
       return null;
@@ -111,15 +111,4 @@ class AuthService {
     }
   }
 
-//Future getData() async {
-//userid = (await FirebaseAuth.instance.currentUser()).uid;
-// email = (await FirebaseAuth.instance.currentUser()).email;
-// await DatabaseService(uid: userid).complain(em, date, userid);
-// var document = await Firestore.instance.collection('USER')
-//     .document(userid)
-//     .get();
-// role = document.data['role'].toString();
-// return email;
-// print(userid);
-//}
 }

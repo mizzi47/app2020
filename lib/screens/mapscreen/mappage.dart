@@ -81,7 +81,7 @@ class _MapP extends State<MapP> {
       ),
       body: Stack(children: [
         Container(
-          height: MediaQuery.of(context).size.height*0.5,
+          height: MediaQuery.of(context).size.height * 0.5,
           width: MediaQuery.of(context).size.width,
           child: GoogleMap(
             initialCameraPosition:

@@ -5,6 +5,7 @@ import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:app2020/services/authservice.dart';
+import 'package:geodesy/geodesy.dart' as d;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
@@ -17,8 +18,12 @@ a.Position _currentPosition;
 String _currentAddress;
 final AuthService _auth = AuthService();
 GoogleMapController _controller;
+d.Geodesy geodesy = d.Geodesy();
+
 double lat;
 double long;
+
+
 
 class MapS extends StatefulWidget {
   @override
@@ -26,7 +31,6 @@ class MapS extends StatefulWidget {
 }
 
 class MapSplash extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return SplashScreenState();
@@ -34,6 +38,7 @@ class MapSplash extends StatefulWidget {
 }
 
 class SplashScreenState extends State<MapSplash> {
+
   _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: a.LocationAccuracy.best)
@@ -57,13 +62,12 @@ class SplashScreenState extends State<MapSplash> {
 
       setState(() {
         _currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
       });
     } catch (e) {
       print(e);
     }
   }
-
 
   @override
   void initState() {
@@ -73,14 +77,13 @@ class SplashScreenState extends State<MapSplash> {
     setState(() {});
   }
 
-
   Future<Timer> loadData() async {
     return new Timer(Duration(seconds: 3), onDoneLoading);
-
   }
 
   onDoneLoading() async {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MapS()));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => MapS()));
   }
 
   @override
@@ -88,9 +91,7 @@ class SplashScreenState extends State<MapSplash> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage('assets/map.png'),
-            fit: BoxFit.cover
-        ) ,
+            image: AssetImage('assets/map.png'), fit: BoxFit.cover),
       ),
       child: Center(
         child: CircularProgressIndicator(
@@ -100,9 +101,6 @@ class SplashScreenState extends State<MapSplash> {
     );
   }
 }
-
-
-
 
 class _MapS extends State<MapS> {
 
@@ -129,13 +127,12 @@ class _MapS extends State<MapS> {
 
       setState(() {
         _currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
       });
     } catch (e) {
       print(e);
     }
   }
-
 
   @override
   void initState() {
@@ -150,10 +147,8 @@ class _MapS extends State<MapS> {
     user = await auth.currentUser();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     showAlertDialog(BuildContext context) {
       AlertDialog alert = AlertDialog(
         content: new Row(
@@ -172,7 +167,6 @@ class _MapS extends State<MapS> {
       );
     }
 
-
     final savemap = Material(
       elevation: 2.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -182,32 +176,32 @@ class _MapS extends State<MapS> {
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
         onPressed: () async {
           showAlertDialog(context);
-            await _auth.updateMap(lat, long);
-            Navigator.pop(context);
-            showDialog(
-              context: context,
-              barrierDismissible: false, // user must tap button!
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Success'),
-                  content: SingleChildScrollView(
-                    child: ListBody(
-                      children: <Widget>[
-                        Text('Location have been saved!'),
-                      ],
-                    ),
+          await _auth.updateMap(lat, long);
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            barrierDismissible: false, // user must tap button!
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Success'),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Text('Location have been saved!'),
+                    ],
                   ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         },
         child: Text("Save Location",
             textAlign: TextAlign.center,
@@ -216,41 +210,40 @@ class _MapS extends State<MapS> {
       ),
     );
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Maps'),
       ),
-      body: Stack(
-          children: [Container(
-            height: MediaQuery.of(context).size.height*0.8,
-            width: MediaQuery.of(context).size.width,
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(target:LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 12.0),
-              markers: Set.from(myMarker),
-              onMapCreated: mapCreated,
-              onTap: _handleTap,
-            ),
+      body: Stack(children: [
+        Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          width: MediaQuery.of(context).size.width,
+          child: GoogleMap(
+            initialCameraPosition: CameraPosition(
+                target: LatLng(
+                    _currentPosition.latitude, _currentPosition.longitude),
+                zoom: 12.0),
+            markers: Set.from(myMarker),
+            onMapCreated: mapCreated,
+            onTap: _handleTap,
           ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: InkWell(
-                child: Container(
-                  height: 40.0,
-                  width: 200.0,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.green
-                  ),
-                  child: savemap
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 25.0,
-            )
-          ]
-      ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: InkWell(
+            child: Container(
+                height: 40.0,
+                width: 200.0,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
+                    color: Colors.green),
+                child: savemap),
+          ),
+        ),
+        SizedBox(
+          height: 25.0,
+        )
+      ]),
     );
   }
 
@@ -260,15 +253,15 @@ class _MapS extends State<MapS> {
     });
   }
 
-  _handleTap(LatLng tappedPoint){
+  _handleTap(LatLng tappedPoint) {
     print(tappedPoint);
     setState(() {
-        myMarker = [];
-        myMarker.add(Marker(
-          markerId: MarkerId(tappedPoint.toString()),
-          position: tappedPoint,
-          draggable: true,
-        ));
+      myMarker = [];
+      myMarker.add(Marker(
+        markerId: MarkerId(tappedPoint.toString()),
+        position: tappedPoint,
+        draggable: true,
+      ));
     });
     lat = tappedPoint.latitude;
     long = tappedPoint.longitude;
@@ -276,4 +269,9 @@ class _MapS extends State<MapS> {
     print(long);
   }
 
+  _getDistance(){
+    d.LatLng positionA = d.LatLng(_currentPosition.latitude, _currentPosition.latitude);
+    d.LatLng positionB = d.LatLng(_currentPosition.latitude, _currentPosition.latitude);
+    num distance = geodesy.distanceBetweenTwoGeoPoints(positionA, positionB);
+  }
 }
