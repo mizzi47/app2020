@@ -40,6 +40,6 @@ class DatabaseService {
 
   Future reqMech(String mid) async {
     return await ClientCollection.document(uid)
-        .setData({'request': mid, 'status': "waiting"}, merge: true);
+        .setData({'request': mid, 'status': "WAITING"}, merge: true);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'package:app2020/screens/authenticate/sign_in.dart';
 import 'package:app2020/screens/homescreen/home.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
@@ -10,15 +11,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart';
 
-String name;
-String email;
-String uemail;
-String userid;
-String gname;
-String pnumber;
-String reqId;
-double lat;
-double long;
+String name="";
+String email="";
+String uemail="";
+String userid="";
+String gname="";
+String pnumber="";
+String status="";
+String reqId = "";
+double lat = 0;
+double long = 0;
 
 var document;
 var mechdocument;
@@ -46,28 +48,32 @@ class Crsplash extends StatefulWidget {
 class SplashScreenState extends State<Crsplash> {
 
 
-  initUser() async {
-    user = await auth.currentUser();
-    document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
-    reqId = document.data['request'].toString();
-    print(reqId);
-  }
-
-  initRequest() async {
-    document = await Firestore.instance.collection('MECHDATA').document(reqId).get();
-    name = document.data['Name'].toString();
-    gname = document.data['Garage Name'].toString();
-    pnumber = document.data['Phone Number'].toString();
-    lat = document.data['latitude'];
-    long = document.data['longtitude'];
-    print(name);
-  }
+  // initUser() async {
+  //     user = await auth.currentUser();
+  //     document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
+  //     reqId = document.data['request'].toString();
+  //     status = document.data['status'].toString();
+  //     print(name);
+  //     setState(() {});
+  //
+  // }
+  //
+  // initRequest() async {
+  //     document = await Firestore.instance.collection('MECHDATA').document(reqId).get();
+  //     name = document.data['Name'].toString();
+  //     gname = document.data['Garage Name'].toString();
+  //     pnumber = document.data['Phone Number'].toString();
+  //     lat = document.data['latitude'];
+  //     long = document.data['longtitude'];
+  //     print(name);
+  //     setState(() {});
+  // }
 
   @override
   void initState() {
     super.initState();
-    initUser();
-    initRequest();
+    // initUser();
+    // initRequest();
     loadData();
     setState(() {});
   }
@@ -113,11 +119,26 @@ class _Crequest extends State<Crequest> {
   void initState() {
     super.initState();
     initUser();
+    initRequest();
     setState(() {});
   }
 
   initUser() async {
-    user = await auth.currentUser();
+      user = await auth.currentUser();
+      document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
+      reqId = document.data['request'].toString();
+      status = document.data['status'].toString();
+      print(name);
+  }
+
+  initRequest() async {
+      document = await Firestore.instance.collection('MECHDATA').document(reqId).get();
+      name = document.data['Name'].toString();
+      gname = document.data['Garage Name'].toString();
+      pnumber = document.data['Phone Number'].toString();
+      lat = document.data['latitude'];
+      long = document.data['longtitude'];
+      print(name);
   }
 
   void mapCreated(controller) {
@@ -164,6 +185,13 @@ class _Crequest extends State<Crequest> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    fetchRequest() {
+      return   Firestore.instance
+          .collection("MECHDATA")
+          .snapshots();
+    }
 
     showAlertDialog(BuildContext context) {
       AlertDialog alert = AlertDialog(
@@ -258,20 +286,19 @@ class _Crequest extends State<Crequest> {
     final getlocation = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
+      color: Colors.lightGreen,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width * 0.3,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async{
           final availableMaps = await MapLauncher.installedMaps;
           print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
-
           await availableMaps.first.showMarker(
             coords: Coords(lat, long),
             title: gname,
           );
         },
-        child: Text("Current Request",
+        child: Text("Get Location",
             textAlign: TextAlign.center,
             style: style.copyWith(
                 color: Colors.white, fontWeight: FontWeight.bold)),
@@ -280,15 +307,24 @@ class _Crequest extends State<Crequest> {
 
     Size size = MediaQuery.of(context).size;
 
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          title: Text("Rider Pocket Mechanix"),
-          backgroundColor: Colors.blueGrey,
-        ),
-        body:Container(
+    Widget _buildChild() {
+      if (reqId == null) {
+        return new Container(
+            color: Colors.black12,
+            child: Column(
+                children: [
+                  SizedBox(height: 15.0),
+                  Center(child: Text('YOUR REQUEST', textAlign: TextAlign.center,
+                      style: style)),
+                ]
+            )
+        );
+    }
+      else{
+        print(reqId+"111");
+        print(reqId+"222");
+        print(reqId+"333");
+        return Container(
           color: Colors.black12,
           child: Column(
             children: [
@@ -346,6 +382,17 @@ class _Crequest extends State<Crequest> {
                         ),
                       ),
                     ),
+                    Card(
+                      margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                      child: ListTile(
+                        leading: Text(
+                          "STATUS: "+status,
+                          style: TextStyle(
+                            color: Colors.teal.shade400,
+                          ),
+                        ),
+                      ),
+                    ),
                     getlocation,
                     SizedBox(height: 15.0)
                   ],
@@ -354,7 +401,97 @@ class _Crequest extends State<Crequest> {
             ],
 
           ),
+        );
+      }
+    }
+
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          title: Text("Rider Pocket Mechanic"),
+          backgroundColor: Colors.blueGrey,
         ),
+        body: _buildChild(),
+        // body:Container(
+        //   color: Colors.black12,
+        //   child: Column(
+        //     children: [
+        //       SizedBox(height: 15.0),
+        //       Center(child: Text('YOUR REQUEST', textAlign: TextAlign.center,
+        //           style: style)),
+        //       SizedBox(height: 20.0),
+        //       Container(
+        //         color: Colors.black38,
+        //         child: Column(
+        //
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           crossAxisAlignment: CrossAxisAlignment.center,
+        //           children: <Widget>[
+        //             SizedBox(
+        //               height: 25.0,
+        //             ),
+        //             Text(
+        //               gname,
+        //               style: TextStyle(
+        //                 fontFamily: 'Pacifico',
+        //                 fontWeight: FontWeight.bold,
+        //                 fontSize: 18.0,
+        //                 color: Colors.white,
+        //               ),
+        //             ),
+        //             Text(
+        //               name,
+        //               style: TextStyle(
+        //                 fontFamily: 'SourceSansPro',
+        //                 fontSize: 18.0,
+        //                 letterSpacing: 2.5,
+        //                 color: Colors.blue.shade50,
+        //               ),
+        //             ),
+        //             Container(
+        //               width: 200.0,
+        //               margin: EdgeInsets.symmetric(vertical: 8.0),
+        //               child: Divider(
+        //                 color: Colors.white,
+        //               ),
+        //             ),
+        //             Card(
+        //               margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+        //               child: ListTile(
+        //                 leading: Icon(
+        //                   Icons.phone,
+        //                   color: Colors.teal.shade400,
+        //                 ),
+        //                 title: Text(
+        //                   pnumber,
+        //                   style: TextStyle(
+        //                     color: Colors.teal.shade400,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //             Card(
+        //               margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+        //               child: ListTile(
+        //                 leading: Text(
+        //                   "STATUS: "+status,
+        //                   style: TextStyle(
+        //                     color: Colors.teal.shade400,
+        //                   ),
+        //                 ),
+        //                 ),
+        //             ),
+        //             getlocation,
+        //             SizedBox(height: 15.0)
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //
+        //   ),
+        // ),
         drawer: Theme(
           data: Theme.of(context).copyWith(
             canvasColor: Colors.blueGrey,

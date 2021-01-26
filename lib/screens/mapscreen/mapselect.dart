@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:ui' as ui;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart' as a;
 import 'package:location/location.dart';
@@ -77,7 +77,7 @@ class SplashScreenState extends State<MapSplash> {
 
 
   Future<Timer> loadData() async {
-    return new Timer(Duration(seconds: 5), onDoneLoading);
+    return new Timer(Duration(seconds: 3), onDoneLoading);
 
   }
 
@@ -144,11 +144,11 @@ class _MapS extends State<MapS> {
     // TODO: implement initState
     super.initState();
     initUser();
-    _getCurrentLocation();
     setState(() {});
   }
 
   initUser() async {
+    _getCurrentLocation();
     user = await auth.currentUser();
   }
 
