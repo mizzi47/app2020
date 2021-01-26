@@ -71,6 +71,16 @@ class AuthService {
     }
   }
 
+  reqMech(String mid) async {
+    try {
+      muser = await _auth.currentUser();
+      await DatabaseService(uid: muser.uid).reqMech(mid);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   test() async {
     try {
       muser = await _auth.currentUser();

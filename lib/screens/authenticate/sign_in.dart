@@ -1,5 +1,6 @@
 import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/Wrapper.dart';
 import 'package:app2020/screens/authenticate/register.dart';
+import 'package:app2020/screens/authenticate/root.dart';
 import 'package:app2020/screens/homescreen/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,8 +27,6 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    // String email="";
-    //  String pw="";
     final registButton = Material(
       elevation: 2.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -50,26 +49,43 @@ class _SignInState extends State<SignIn> {
 
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
-    showAlertDialog(BuildContext context) {
-      AlertDialog alert = AlertDialog(
-        content: new Row(
-          children: [
-            CircularProgressIndicator(),
-            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
-          ],
-        ),
-      );
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
-    }
+        showAlertDialog(BuildContext context) {
+          AlertDialog alert = AlertDialog(
+            content: new Row(
+              children: [
+                CircularProgressIndicator(),
+                Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
+              ],
+            ),
+          );
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return alert;
+            },
+          );
+        }
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        title: Text("Rider Pocket Mechanic"),
+        backgroundColor: Colors.blueGrey,
+        leading: IconButton(
+          icon:
+              Icon(Icons.backspace_sharp, color: Colors.white, size: 30.0),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => Root(),
+              ),
+              (route) => false,
+            );
+          },
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -180,28 +196,26 @@ class _SignInState extends State<SignIn> {
                               );
                             },
                           );
-                        } else if (result != null) {
-                          var document = await Firestore.instance
-                              .collection('USER')
-                              .document(result.uid)
-                              .get();
+                        }
+                        else if (result != null) {
+                          var document = await Firestore.instance.collection('USER').document(result.uid).get();
                           if (document != null) {
                             String role = document.data['role'].toString();
+                            Navigator.pop(context);
                             if (role == 'user') {
-                              Navigator.pop(context);
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                   builder: (BuildContext context) => Wrapper(),
                                 ),
-                                (route) => false,
+                                  (route) => false,
                               );
-                            } else if (role == 'mech') {
+                            }
+                            else if (role == 'mech') {
                               await _auth.signOut();
                               showDialog(
                                 context: context,
                                 barrierDismissible: false,
-                                // user must tap button!
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text('Invalid email/password'),

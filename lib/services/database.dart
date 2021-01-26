@@ -37,4 +37,9 @@ class DatabaseService {
     return await MechCollection.document(uid)
         .setData({'latitude': lat, 'longtitude': long}, merge: true);
   }
+
+  Future reqMech(String mid) async {
+    return await ClientCollection.document(uid)
+        .setData({'request': mid, 'status': "waiting"}, merge: true);
+  }
 }

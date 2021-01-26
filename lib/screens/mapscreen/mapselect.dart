@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart' as a;
 import 'package:location/location.dart';
@@ -11,7 +13,6 @@ FirebaseUser user;
 TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 List<Marker> allMarkers = [];
 List<Marker> myMarker = [];
-LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
 Location _location = Location();
 final a.Geolocator geolocator = a.Geolocator()..forceAndroidLocationManager;
 a.Position _currentPosition;
@@ -26,19 +27,86 @@ class MapS extends StatefulWidget {
   _MapS createState() => _MapS();
 }
 
-class _MapS extends State<MapS> {
+class MapSplash extends StatefulWidget {
 
-  void _onMapCreated(GoogleMapController _cntlr)
-  {
-    _controller = _cntlr;
-    _location.onLocationChanged.listen((l) {
-      _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude, l.longitude),zoom: 15),
-        ),
-      );
+  @override
+  State<StatefulWidget> createState() {
+    return SplashScreenState();
+  }
+}
+
+class SplashScreenState extends State<MapSplash> {
+  _getCurrentLocation() {
+    geolocator
+        .getCurrentPosition(desiredAccuracy: a.LocationAccuracy.best)
+        .then((a.Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
     });
   }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<a.Placemark> p = await geolocator.placemarkFromCoordinates(
+          _currentPosition.latitude, _currentPosition.longitude);
+
+      a.Placemark place = p[0];
+
+      setState(() {
+        _currentAddress =
+        "${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+    _getCurrentLocation();
+    setState(() {});
+  }
+
+
+  Future<Timer> loadData() async {
+    return new Timer(Duration(seconds: 5), onDoneLoading);
+
+  }
+
+  onDoneLoading() async {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MapS()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage('assets/map.png'),
+            fit: BoxFit.cover
+        ) ,
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+class _MapS extends State<MapS> {
 
   _getCurrentLocation() {
     geolocator
@@ -77,25 +145,35 @@ class _MapS extends State<MapS> {
     super.initState();
     initUser();
     _getCurrentLocation();
-    allMarkers.add(Marker(
-        markerId: MarkerId('myMarker'),
-        draggable: true,
-        onTap: () {
-          print('Marker Tapped');
-        },
-        position: LatLng(40.7128, -74.0060)));
     setState(() {});
   }
 
   initUser() async {
     user = await auth.currentUser();
-    print(user.email);
-
-    //print(user.uid);
   }
+
 
   @override
   Widget build(BuildContext context) {
+
+    showAlertDialog(BuildContext context) {
+      AlertDialog alert = AlertDialog(
+        content: new Row(
+          children: [
+            CircularProgressIndicator(),
+            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
+          ],
+        ),
+      );
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+
 
     final savemap = Material(
       elevation: 2.0,
@@ -104,8 +182,34 @@ class _MapS extends State<MapS> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width * 0.6,
         padding: EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 5.0),
-        onPressed: () {
-            _auth.updateMap(lat, long);
+        onPressed: () async {
+          showAlertDialog(context);
+            await _auth.updateMap(lat, long);
+            Navigator.pop(context);
+            showDialog(
+              context: context,
+              barrierDismissible: false, // user must tap button!
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Success'),
+                  content: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text('Location have been saved!'),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
         },
         child: Text("Save Location",
             textAlign: TextAlign.center,
@@ -113,6 +217,7 @@ class _MapS extends State<MapS> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
+
 
     return Scaffold(
       appBar: AppBar(
@@ -171,24 +276,6 @@ class _MapS extends State<MapS> {
     long = tappedPoint.longitude;
     print(lat);
     print(long);
-
   }
 
-  movetoBoston() {
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(42.3601, -71.0589), zoom: 14.0, bearing: 45.0, tilt: 45.0),
-    ));
-  }
-
-  movetoNewYork() {
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(40.7128, -74.0060), zoom: 12.0),
-    ));
-  }
-
-  movetoMy() {
-    _controller.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: LatLng(_currentPosition.latitude, _currentPosition.longitude), zoom: 12.0),
-    ));
-  }
 }

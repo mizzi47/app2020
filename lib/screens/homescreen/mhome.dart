@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app2020/screens/authenticate/msign_in.dart';
+import 'package:app2020/screens/mapscreen/mapselect.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
-import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/mapscreen/mapselect.dart';
 
 String userid;
 String role;
@@ -87,7 +87,7 @@ class SplashScreenState extends State<SplashScreen> {
 
 
   Future<Timer> loadData() async {
-    return new Timer(Duration(seconds: 5), onDoneLoading);
+    return new Timer(Duration(seconds: 3), onDoneLoading);
 
   }
 
@@ -143,6 +143,37 @@ class _MHome extends State<MHome> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<bool> _onBackPressed() {
+    return showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit the App'),
+        actions: <Widget>[
+          new GestureDetector(
+            onTap: () => Navigator.of(context).pop(false),
+            child: Text("NO"),
+          ),
+          SizedBox(height: 16),
+          new GestureDetector(
+            onTap: () {
+              auth.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MSignIn(),
+                ),
+                    (route) => false,
+              );
+            },
+            child: Text("YES"),
+          ),
+        ],
+      ),
+    ) ??
+        false;
   }
 
   @override
@@ -230,7 +261,7 @@ class _MHome extends State<MHome> {
         onPressed: () async{
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => MapS()),
+            MaterialPageRoute(builder: (context) => MapSplash()),
           );
         },
 
@@ -268,178 +299,181 @@ class _MHome extends State<MHome> {
       ),
     );
 
-    return Scaffold(
-      backgroundColor: Colors.blueGrey,
-        appBar: AppBar(
-          title: Text("Rider Pocket Mechanic"),
-          backgroundColor: Colors.indigo,
-        ),
-        body: Column(
-          children: [
-            Card(
-              color: Colors.grey,
-              child: ListTile(
-                title: Text(
-                  "YOUR GARAGE",
-                  style: TextStyle(
-                    color: Colors.white,
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        backgroundColor: Colors.blueGrey,
+          appBar: AppBar(
+            title: Text("Rider Pocket Mechanic"),
+            backgroundColor: Colors.indigo,
+          ),
+          body: Column(
+            children: [
+              Card(
+                color: Colors.grey,
+                child: ListTile(
+                  title: Text(
+                    "YOUR GARAGE",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Column(
+              Column(
 
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 50.0,
-                ),
-                Text(
-                  gname,
-                  style: TextStyle(
-                    fontFamily: 'Pacifico',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 32.0,
-                    color: Colors.white,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 50.0,
                   ),
-                ),
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontFamily: 'SourceSansPro',
-                    fontSize: 18.0,
-                    letterSpacing: 2.5,
-                    color: Colors.blue.shade50,
-                  ),
-                ),
-                Container(
-                  width: 200.0,
-                  margin: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Divider(
-                    color: Colors.white,
-                  ),
-                ),
-                Card(
-                  margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.phone,
-                      color: Colors.teal.shade400,
+                  Text(
+                    gname,
+                    style: TextStyle(
+                      fontFamily: 'Pacifico',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                      color: Colors.white,
                     ),
-                    title: Text(
-                      pnumber,
-                      style: TextStyle(
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontFamily: 'SourceSansPro',
+                      fontSize: 18.0,
+                      letterSpacing: 2.5,
+                      color: Colors.blue.shade50,
+                    ),
+                  ),
+                  Container(
+                    width: 200.0,
+                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                    child: Divider(
+                      color: Colors.white,
+                    ),
+                  ),
+                  Card(
+                    margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.phone,
                         color: Colors.teal.shade400,
+                      ),
+                      title: Text(
+                        pnumber,
+                        style: TextStyle(
+                          color: Colors.teal.shade400,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Card(
-                  margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.email,
-                      color: Colors.teal.shade400,
-                    ),
-                    title: Text(
-                      user.email,
-                      style: TextStyle(
+                  Card(
+                    margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.email,
                         color: Colors.teal.shade400,
+                      ),
+                      title: Text(
+                        user.email,
+                        style: TextStyle(
+                          color: Colors.teal.shade400,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                Card(
-                  margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.add_location_sharp,
-                      color: Colors.teal.shade400,
-                    ),
-                    title: Text(
-                      _currentAddress,
-                      style: TextStyle(
+                  Card(
+                    margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.add_location_sharp,
                         color: Colors.teal.shade400,
+                      ),
+                      title: Text(
+                        _currentAddress,
+                        style: TextStyle(
+                          color: Colors.teal.shade400,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 25.0,
-                ),
-                updmap,
-                SizedBox(
-                  height: 25.0,
-                ),
-                update
-              ],
-            ),
-          ],
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  updmap,
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  update
+                ],
+              ),
+            ],
 
-        ),
-        drawer: Theme(
-          data: Theme.of(context).copyWith(
-            canvasColor: Colors
-                .indigo, //This will change the drawer background to blue.
-            //other styles
           ),
-          child: Drawer(
-            // Add a ListView to the drawer. This ensures the user can scroll
-            // through the options in the drawer if there isn't enough vertical
-            // space to fit everything.
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                UserAccountsDrawerHeader(
-                    accountName: null,
-                  accountEmail: Text("Login As : "+"${user?.email}"),
-                  currentAccountPicture:
-                  Image.asset(
-                    "assets/logo.png",
-                    fit: BoxFit.contain,
-                  ),
+          drawer: Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Colors
+                  .indigo, //This will change the drawer background to blue.
+              //other styles
+            ),
+            child: Drawer(
+              // Add a ListView to the drawer. This ensures the user can scroll
+              // through the options in the drawer if there isn't enough vertical
+              // space to fit everything.
+              child: ListView(
+                // Important: Remove any padding from the ListView.
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  UserAccountsDrawerHeader(
+                      accountName: null,
+                    accountEmail: Text("Login As : "+"${user?.email}"),
+                    currentAccountPicture:
+                    Image.asset(
+                      "assets/logo.png",
+                      fit: BoxFit.contain,
                     ),
-                // DrawerHeader(
-                //   decoration: BoxDecoration(
-                //       color: Colors.purple,
-                //       image: DecorationImage(
-                //           image: AssetImage("assets/logo.png"),
-                //           fit: BoxFit.cover)
-                //   ),
-                //
-                // ),
-                ListTile(
-                  title: shome,
-                  onTap: () {
-                    // Update the state of the app
+                      ),
+                  // DrawerHeader(
+                  //   decoration: BoxDecoration(
+                  //       color: Colors.purple,
+                  //       image: DecorationImage(
+                  //           image: AssetImage("assets/logo.png"),
+                  //           fit: BoxFit.cover)
+                  //   ),
+                  //
+                  // ),
+                  ListTile(
+                    title: shome,
+                    onTap: () {
+                      // Update the state of the app
+                      // ...
+                      // Then close the drawer
+                      Navigator.pop(context);
+                    },
                     // ...
                     // Then close the drawer
-                    Navigator.pop(context);
-                  },
-                  // ...
-                  // Then close the drawer
-                ),
-                ListTile(
-                  title: edit,
-                  onTap: () {
-                    // Update the state of the app
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: logout,
-                  onTap: () {
-                    // Update the state of the app
-                    // ...
-                    // Then close the drawer
-                  },
-                ),
-              ],
+                  ),
+                  ListTile(
+                    title: edit,
+                    onTap: () {
+                      // Update the state of the app
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    title: logout,
+                    onTap: () {
+                      // Update the state of the app
+                      // ...
+                      // Then close the drawer
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 }

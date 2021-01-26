@@ -1,5 +1,6 @@
 import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/authenticate/mregister.dart';
 import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/MWrapper.dart';
+import 'package:app2020/screens/authenticate/root.dart';
 import 'package:app2020/screens/homescreen/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -68,6 +69,23 @@ class _MSignInState extends State<MSignIn> {
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        title: Text("Rider Pocket Mechanic"),
+        backgroundColor: Colors.blueGrey,
+        leading: IconButton(
+          icon:
+          Icon(Icons.backspace_sharp, color: Colors.white, size: 30.0),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => Root(),
+              ),
+                  (route) => false,
+            );
+          },
+        ),
+      ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -179,14 +197,11 @@ class _MSignInState extends State<MSignIn> {
                           );
                         }
                         else if(result!= null){
-                          // print("sdsds useruid  "+result.uid);
-                          var document = await Firestore.instance.collection('USER')
-                              .document(result.uid)
-                              .get();
+                          var document = await Firestore.instance.collection('USER').document(result.uid).get();
                           if(document!=null){
                             String role = document.data['role'].toString();
+                            Navigator.pop(context);
                             if(role == 'mech'){
-                              Navigator.pop(context);
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
@@ -197,7 +212,6 @@ class _MSignInState extends State<MSignIn> {
                             }
                             else if(role == 'user'){
                               await _auth.signOut();
-                              Navigator.pop(context);
                               showDialog(
                                 context: context,
                                 barrierDismissible: false, // user must tap button!
