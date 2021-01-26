@@ -1,13 +1,7 @@
-import 'dart:io';
-
 import 'package:app2020/screens/authenticate/sign_in.dart';
-import 'package:app2020/screens/homescreen/home.dart';
 import 'package:flutter/material.dart';
-// import 'package:app2020/screens/homescreen/home.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:app2020/services/authservice.dart';
-import 'package:app2020/shared/constants.dart';
 
 class Register extends StatefulWidget {
 

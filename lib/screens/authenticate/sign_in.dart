@@ -1,8 +1,6 @@
 import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/Wrapper.dart';
 import 'package:app2020/screens/authenticate/register.dart';
 import 'package:app2020/screens/authenticate/root.dart';
-import 'package:app2020/screens/homescreen/home.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:app2020/services/authservice.dart';
@@ -47,8 +45,6 @@ class _SignInState extends State<SignIn> {
       ),
     );
 
-    final GlobalKey<ScaffoldState> _scaffoldKey =
-        new GlobalKey<ScaffoldState>();
         showAlertDialog(BuildContext context) {
           AlertDialog alert = AlertDialog(
             content: new Row(

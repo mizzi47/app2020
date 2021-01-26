@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart' as a;
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:app2020/services/authservice.dart';
-import 'package:app2020/screens/homescreen/mhome.dart';
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;

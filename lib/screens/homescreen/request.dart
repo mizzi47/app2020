@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'package:app2020/screens/authenticate/sign_in.dart';
 import 'package:app2020/screens/homescreen/home.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
@@ -12,9 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart';
 
 String name="";
-String email="";
 String uemail="";
-String userid="";
 String gname="";
 String pnumber="";
 String status="";
@@ -27,8 +24,6 @@ var mechdocument;
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-Position _currentPosition;
-String _currentAddress;
 final AuthService _auth = AuthService();
 
 class Crequest extends StatefulWidget {
@@ -48,32 +43,34 @@ class Crsplash extends StatefulWidget {
 class SplashScreenState extends State<Crsplash> {
 
 
-  // initUser() async {
-  //     user = await auth.currentUser();
-  //     document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
-  //     reqId = document.data['request'].toString();
-  //     status = document.data['status'].toString();
-  //     print(name);
-  //     setState(() {});
-  //
-  // }
-  //
-  // initRequest() async {
-  //     document = await Firestore.instance.collection('MECHDATA').document(reqId).get();
-  //     name = document.data['Name'].toString();
-  //     gname = document.data['Garage Name'].toString();
-  //     pnumber = document.data['Phone Number'].toString();
-  //     lat = document.data['latitude'];
-  //     long = document.data['longtitude'];
-  //     print(name);
-  //     setState(() {});
-  // }
+  initUser() async {
+      name = "";
+      gname = "";
+      pnumber = "";
+      lat = null;
+      long = null;
+      user = await auth.currentUser();
+      document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
+      if(document.data['request'] == null){
+        reqId = "no";
+      }
+      else{
+        reqId = document.data['request'].toString();
+        status = document.data['status'].toString();
+        document = await Firestore.instance.collection('MECHDATA').document(reqId).get();
+        name = document.data['Name'].toString();
+        gname = document.data['Garage Name'].toString();
+        pnumber = document.data['Phone Number'].toString();
+        lat = document.data['latitude'];
+        long = document.data['longtitude'];
+      }
+      print(name+"ssd");
+  }
 
   @override
   void initState() {
     super.initState();
-    // initUser();
-    // initRequest();
+    initUser();
     loadData();
     setState(() {});
   }
@@ -119,26 +116,12 @@ class _Crequest extends State<Crequest> {
   void initState() {
     super.initState();
     initUser();
-    initRequest();
     setState(() {});
   }
 
   initUser() async {
       user = await auth.currentUser();
-      document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
-      reqId = document.data['request'].toString();
-      status = document.data['status'].toString();
-      print(name);
-  }
-
-  initRequest() async {
-      document = await Firestore.instance.collection('MECHDATA').document(reqId).get();
-      name = document.data['Name'].toString();
-      gname = document.data['Garage Name'].toString();
-      pnumber = document.data['Phone Number'].toString();
-      lat = document.data['latitude'];
-      long = document.data['longtitude'];
-      print(name);
+      print(name+"crequestinit");
   }
 
   void mapCreated(controller) {
@@ -146,7 +129,6 @@ class _Crequest extends State<Crequest> {
       _controller = controller;
     });
   }
-  @override
 
   cancelreq(String uid) async {
     await _auth.reqMech(uid);
@@ -186,30 +168,6 @@ class _Crequest extends State<Crequest> {
   @override
   Widget build(BuildContext context) {
 
-
-    fetchRequest() {
-      return   Firestore.instance
-          .collection("MECHDATA")
-          .snapshots();
-    }
-
-    showAlertDialog(BuildContext context) {
-      AlertDialog alert = AlertDialog(
-        content: new Row(
-          children: [
-            CircularProgressIndicator(),
-            Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
-          ],
-        ),
-      );
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
-    }
 
     final shome = Material(
       elevation: 5.0,
@@ -308,7 +266,9 @@ class _Crequest extends State<Crequest> {
     Size size = MediaQuery.of(context).size;
 
     Widget _buildChild() {
-      if (reqId == null) {
+
+      if (reqId == "no") {
+        print(reqId+"widget");
         return new Container(
             color: Colors.black12,
             child: Column(
@@ -320,7 +280,7 @@ class _Crequest extends State<Crequest> {
             )
         );
     }
-      else{
+      else if (reqId != null){
         print(reqId+"111");
         print(reqId+"222");
         print(reqId+"333");
@@ -343,7 +303,7 @@ class _Crequest extends State<Crequest> {
                       height: 25.0,
                     ),
                     Text(
-                      gname,
+                      '${gname}',
                       style: TextStyle(
                         fontFamily: 'Pacifico',
                         fontWeight: FontWeight.bold,
@@ -352,7 +312,7 @@ class _Crequest extends State<Crequest> {
                       ),
                     ),
                     Text(
-                      name,
+                      '${name}',
                       style: TextStyle(
                         fontFamily: 'SourceSansPro',
                         fontSize: 18.0,
@@ -375,7 +335,7 @@ class _Crequest extends State<Crequest> {
                           color: Colors.teal.shade400,
                         ),
                         title: Text(
-                          pnumber,
+                          '${pnumber}',
                           style: TextStyle(
                             color: Colors.teal.shade400,
                           ),

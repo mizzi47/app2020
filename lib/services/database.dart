@@ -1,17 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:app2020/models/user.dart';
-
 class DatabaseService {
   final String uid;
 
   DatabaseService({this.uid});
 
-  final CollectionReference UserCollection =
-      Firestore.instance.collection('USER');
-  final CollectionReference ClientCollection =
-      Firestore.instance.collection('CLIENTDATA');
-  final CollectionReference MechCollection =
-      Firestore.instance.collection('MECHDATA');
+  final CollectionReference UserCollection = Firestore.instance.collection('USER');
+  final CollectionReference ClientCollection = Firestore.instance.collection('CLIENTDATA');
+  final CollectionReference MechCollection = Firestore.instance.collection('MECHDATA');
 
   Future updateUserAcc(String em) async {
     return await UserCollection.document(uid)

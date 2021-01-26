@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'package:app2020/screens/authenticate/msign_in.dart';
 import 'package:app2020/screens/mapscreen/mapselect.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
 String userid;
@@ -22,7 +19,6 @@ var document;
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-Position _currentPosition;
 String _currentAddress;
 final AuthService _auth = AuthService();
 

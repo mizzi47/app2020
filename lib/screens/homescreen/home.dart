@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'package:app2020/screens/authenticate/sign_in.dart';
 import 'package:app2020/screens/homescreen/request.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
@@ -108,7 +107,6 @@ class _Home extends State<Home> {
       _controller = controller;
     });
   }
-  @override
 
   goreq(String uid) async {
       print(user.uid);

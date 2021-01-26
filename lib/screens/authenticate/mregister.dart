@@ -1,11 +1,8 @@
-import 'dart:io';
 import 'package:app2020/screens/authenticate/msign_in.dart';
-import 'package:app2020/screens/homescreen//mhome.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:app2020/services/authservice.dart';
-import 'package:app2020/shared/constants.dart';
+
 
 class MRegister extends StatefulWidget {
 

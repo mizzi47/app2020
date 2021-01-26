@@ -1,17 +1,10 @@
-// import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/authenticate/register.dart';
-// import 'package:app2020/screens/homescreen/home.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/MWrapper.dart';
 import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/Wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:app2020/services/authservice.dart';
-import 'package:app2020/screens/authenticate/sign_in.dart';
-import 'package:app2020/screens/authenticate/msign_in.dart';
 
+// ignore: must_be_immutable
 class Root extends StatelessWidget{
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-  final AuthService _auth = AuthService();
   final formkey = GlobalKey<FormState>();
   TextEditingController email = new TextEditingController();
   TextEditingController pw = new TextEditingController();
