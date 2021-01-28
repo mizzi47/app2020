@@ -273,7 +273,7 @@ class _Crequest extends State<Crequest> {
         minWidth: MediaQuery.of(context).size.width * 0.3,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          Firestore.instance.collection('CLIENTDATA').document(user.uid).updateData({'request': FieldValue.delete()});
+          Firestore.instance.collection('CLIENTDATA').document(user.uid).updateData({'request': FieldValue.delete(), 'status': FieldValue.delete()});
           Firestore.instance.collection('MECHDATA').document(reqId).collection('request').document(user.uid).delete();
           Navigator.pushAndRemoveUntil(
             context,
