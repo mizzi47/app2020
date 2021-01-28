@@ -20,22 +20,14 @@ FirebaseUser user;
 String uemail;
 final AuthService _auth = AuthService();
 
-class Home extends StatefulWidget {
-  final appTitle = 'Rider Pocket Mechanic';
-
-  @override
-  _Home createState() => _Home();
-}
-
-class SplashScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return SplashScreenState();
+class Init {
+  static Future initialize() async {
+    await _registerServices();
+    await _loadSettings();
   }
-}
 
-class SplashScreenState extends State<SplashScreen> {
-  initUser() async {
+  static _registerServices() async {
+    //TODO register services
     user = await auth.currentUser();
     uemail = user.email;
     document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
@@ -44,23 +36,34 @@ class SplashScreenState extends State<SplashScreen> {
     pnumber = document.data['Phone Number'].toString();
   }
 
+  static _loadSettings() async {
+    //TODO load settings
+  }
+}
+
+class InitializationApp extends StatelessWidget {
+
+  final Future _initFuture = Init.initialize();
+
   @override
-  void initState() {
-    super.initState();
-    initUser();
-    loadData();
-    setState(() {});
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Initialization',
+      home: FutureBuilder(
+        future: _initFuture,
+        builder: (context, snapshot){
+          if (snapshot.connectionState == ConnectionState.done){
+            return Home();
+          } else {
+            return SplashScreen();
+          }
+        },
+      ),
+    );
   }
+}
 
-  Future<Timer> loadData() async {
-    return new Timer(Duration(seconds: 3), onDoneLoading);
-  }
-
-  onDoneLoading() async {
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => Home()));
-  }
-
+class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -75,6 +78,14 @@ class SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+}
+
+
+class Home extends StatefulWidget {
+  final appTitle = 'Rider Pocket Mechanic';
+
+  @override
+  _Home createState() => _Home();
 }
 
 class _Home extends State<Home> {
@@ -162,7 +173,7 @@ class _Home extends State<Home> {
 
     final shome = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
+      borderRadius: BorderRadius.circular(10.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
@@ -185,7 +196,7 @@ class _Home extends State<Home> {
 
     final logout = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
+      borderRadius: BorderRadius.circular(10.0),
       color: Colors.red,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width * 0.3,
@@ -211,7 +222,7 @@ class _Home extends State<Home> {
 
     final request = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
+      borderRadius: BorderRadius.circular(10.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width * 0.3,
@@ -220,7 +231,7 @@ class _Home extends State<Home> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => Crsplash(),
+              builder: (BuildContext context) => InitRequest(),
             ),
             (route) => false,
           );
@@ -591,7 +602,7 @@ class _Home extends State<Home> {
               children: <Widget>[
                 UserAccountsDrawerHeader(
                   decoration: BoxDecoration(
-                    color: Colors.red,
+                    color: Colors.black38,
                   ),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Colors.red,

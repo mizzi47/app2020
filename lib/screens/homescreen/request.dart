@@ -33,15 +33,14 @@ class Crequest extends StatefulWidget {
   _Crequest createState() => _Crequest();
 }
 
-class Crsplash extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return SplashScreenState();
+class Init {
+  static Future initialize() async {
+    await _registerServices();
+    await _loadSettings();
   }
-}
 
-class SplashScreenState extends State<Crsplash> {
-  initUser() async {
+  static _registerServices() async {
+    //TODO register services
     name = "";
     gname = "";
     pnumber = "";
@@ -58,7 +57,7 @@ class SplashScreenState extends State<Crsplash> {
       reqId = document.data['request'].toString();
       status = document.data['status'].toString();
       document =
-          await Firestore.instance.collection('MECHDATA').document(reqId).get();
+      await Firestore.instance.collection('MECHDATA').document(reqId).get();
       name = document.data['Name'].toString();
       gname = document.data['Garage Name'].toString();
       pnumber = document.data['Phone Number'].toString();
@@ -68,23 +67,34 @@ class SplashScreenState extends State<Crsplash> {
     print(name + "ssd");
   }
 
+  static _loadSettings() async {
+    //TODO load settings
+  }
+}
+
+class InitRequest extends StatelessWidget {
+
+  final Future _initFuture = Init.initialize();
+
   @override
-  void initState() {
-    super.initState();
-    initUser();
-    loadData();
-    setState(() {});
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Initialization',
+      home: FutureBuilder(
+        future: _initFuture,
+        builder: (context, snapshot){
+          if (snapshot.connectionState == ConnectionState.done){
+            return Crequest();
+          } else {
+            return SplashScreen();
+          }
+        },
+      ),
+    );
   }
+}
 
-  Future<Timer> loadData() async {
-    return new Timer(Duration(seconds: 3), onDoneLoading);
-  }
-
-  onDoneLoading() async {
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => Crequest()));
-  }
-
+class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -224,7 +234,7 @@ class _Crequest extends State<Crequest> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => Crsplash(),
+              builder: (BuildContext context) => InitRequest(),
             ),
             (route) => false,
           );

@@ -23,8 +23,6 @@ d.Geodesy geodesy = d.Geodesy();
 double lat;
 double long;
 
-
-
 class MapS extends StatefulWidget {
   @override
   _MapS createState() => _MapS();
@@ -38,7 +36,6 @@ class MapSplash extends StatefulWidget {
 }
 
 class SplashScreenState extends State<MapSplash> {
-
   _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: a.LocationAccuracy.best)
@@ -103,7 +100,6 @@ class SplashScreenState extends State<MapSplash> {
 }
 
 class _MapS extends State<MapS> {
-
   _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: a.LocationAccuracy.best)
@@ -269,9 +265,11 @@ class _MapS extends State<MapS> {
     print(long);
   }
 
-  _getDistance(){
-    d.LatLng positionA = d.LatLng(_currentPosition.latitude, _currentPosition.latitude);
-    d.LatLng positionB = d.LatLng(_currentPosition.latitude, _currentPosition.latitude);
+  _getDistance() {
+    d.LatLng positionA =
+        d.LatLng(_currentPosition.latitude, _currentPosition.latitude);
+    d.LatLng positionB =
+        d.LatLng(_currentPosition.latitude, _currentPosition.latitude);
     num distance = geodesy.distanceBetweenTwoGeoPoints(positionA, positionB);
   }
 }

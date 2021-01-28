@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
 String name = "";
 String uemail = "";
 String gname = "";
@@ -19,7 +18,6 @@ String status = "";
 String reqId = "";
 double lat = 0;
 double long = 0;
-
 var document;
 var mechdocument;
 final FirebaseAuth auth = FirebaseAuth.instance;
@@ -27,49 +25,53 @@ FirebaseUser user;
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 final AuthService _auth = AuthService();
 
-class Mrequest extends StatefulWidget {
-  final appTitle = 'Rider Pocket Mechanic';
-
-  @override
-  _Mrequest createState() => _Mrequest();
-}
-
-class Mrsplash extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return SplashScreenState();
+class Init {
+  static Future initialize() async {
+    await _registerServices();
+    await _loadSettings();
   }
-}
 
-class SplashScreenState extends State<Mrsplash> {
-  initUser() async {
+  static _registerServices() async {
+    //TODO register services
     user = await auth.currentUser();
     document = await Firestore.instance.collection('MECHDATA').document(user.uid).get();
   }
 
+  static _loadSettings() async {
+    //TODO load settings
+  }
+
+}
+
+class InitMrequest extends StatelessWidget {
+
+  final Future _initFuture = Init.initialize();
+
   @override
-  void initState() {
-    super.initState();
-    initUser();
-    loadData();
-    setState(() {});
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Initialization',
+      home: FutureBuilder(
+        future: _initFuture,
+        builder: (context, snapshot){
+          if (snapshot.connectionState == ConnectionState.done){
+            return InitMrequest();
+          } else {
+            return SplashScreen();
+          }
+        },
+      ),
+    );
   }
+}
 
-  Future<Timer> loadData() async {
-    return new Timer(Duration(seconds: 3), onDoneLoading);
-  }
-
-  onDoneLoading() async {
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => Mrequest()));
-  }
-
+class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-            image: AssetImage('assets/bg2.jpg'), fit: BoxFit.cover),
+            image: AssetImage('assets/mg.jpg'), fit: BoxFit.cover),
       ),
       child: Center(
         child: CircularProgressIndicator(
@@ -78,6 +80,15 @@ class SplashScreenState extends State<Mrsplash> {
       ),
     );
   }
+}
+
+
+
+class Mrequest extends StatefulWidget {
+  final appTitle = 'Rider Pocket Mechanic';
+
+  @override
+  _Mrequest createState() => _Mrequest();
 }
 
 class _Mrequest extends State<Mrequest> {
@@ -203,7 +214,7 @@ class _Mrequest extends State<Mrequest> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => Mrsplash(),
+              builder: (BuildContext context) => InitMrequest(),
             ),
                 (route) => false,
           );

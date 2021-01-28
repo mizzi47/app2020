@@ -23,48 +23,21 @@ final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 String _currentAddress;
 final AuthService _auth = AuthService();
 
-class MHome extends StatefulWidget {
-  final appTitle = 'SECURIDE';
-
-  @override
-  _MHome createState() => _MHome();
-}
-
-class SplashScreen extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return SplashScreenState();
-  }
-}
-
-class SplashScreenState extends State<SplashScreen> {
-  _getAddressFromLatLng() async {
-    try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(lat, long);
-
-      Placemark place = p[0];
-
-      setState(() {
-        _currentAddress =
-            "${place.locality}, ${place.postalCode}, ${place.country}";
-      });
-    } catch (e) {
-      print(e);
-    }
+class Init {
+  static Future initialize() async {
+    await _registerServices();
+    await _loadSettings();
   }
 
-  initUser() async {
+  static _registerServices() async {
+    //TODO register services
     user = await auth.currentUser();
-    document = await Firestore.instance
-        .collection('MECHDATA')
-        .document(user.uid)
-        .get();
+    document = await Firestore.instance.collection('MECHDATA').document(user.uid).get();
     name = document.data['Name'].toString();
     gname = document.data['Garage Name'].toString();
     pnumber = document.data['Phone Number'].toString();
     lat = document.data['latitude'];
     long = document.data['longtitude'];
-    _getAddressFromLatLng();
     print(user.uid);
     print(name);
     print(pnumber);
@@ -72,23 +45,35 @@ class SplashScreenState extends State<SplashScreen> {
     print(long);
   }
 
+  static _loadSettings() async {
+    //TODO load settings
+  }
+
+}
+
+class InitializationApp extends StatelessWidget {
+
+  final Future _initFuture = Init.initialize();
+
   @override
-  void initState() {
-    super.initState();
-    initUser();
-    loadData();
-    setState(() {});
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Initialization',
+      home: FutureBuilder(
+        future: _initFuture,
+        builder: (context, snapshot){
+          if (snapshot.connectionState == ConnectionState.done){
+            return MHome();
+          } else {
+            return SplashScreen();
+          }
+        },
+      ),
+    );
   }
+}
 
-  Future<Timer> loadData() async {
-    return new Timer(Duration(seconds: 3), onDoneLoading);
-  }
-
-  onDoneLoading() async {
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => MHome()));
-  }
-
+class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -105,19 +90,24 @@ class SplashScreenState extends State<SplashScreen> {
   }
 }
 
+
+class MHome extends StatefulWidget {
+  final appTitle = 'SECURIDE';
+
+  @override
+  _MHome createState() => _MHome();
+}
+
+
 class _MHome extends State<MHome> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
   @override
   void initState() {
+    _getAddressFromLatLng();
     super.initState();
     initUser();
-    _getAddressFromLatLng();
     setState(() {});
-  }
-
-  initUser() async {
-    user = await auth.currentUser();
   }
 
   _getAddressFromLatLng() async {
@@ -128,41 +118,46 @@ class _MHome extends State<MHome> {
 
       setState(() {
         _currentAddress =
-            "${place.locality}, ${place.postalCode}, ${place.country}";
+        "${place.locality}, ${place.postalCode}, ${place.country}";
       });
     } catch (e) {
       print(e);
     }
   }
 
+
+  initUser() async {
+    user = await auth.currentUser();
+  }
+
   Future<bool> _onBackPressed() {
     return showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit the App'),
-            actions: <Widget>[
-              new GestureDetector(
-                onTap: () => Navigator.of(context).pop(false),
-                child: Text("NO"),
-              ),
-              SizedBox(height: 16),
-              new GestureDetector(
-                onTap: () {
-                  auth.signOut();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => MSignIn(),
-                    ),
-                    (route) => false,
-                  );
-                },
-                child: Text("YES"),
-              ),
-            ],
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit the App'),
+        actions: <Widget>[
+          new GestureDetector(
+            onTap: () => Navigator.of(context).pop(false),
+            child: Text("NO"),
           ),
-        ) ??
+          SizedBox(height: 16),
+          new GestureDetector(
+            onTap: () {
+              auth.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MSignIn(),
+                ),
+                    (route) => false,
+              );
+            },
+            child: Text("YES"),
+          ),
+        ],
+      ),
+    ) ??
         false;
   }
 
@@ -181,7 +176,7 @@ class _MHome extends State<MHome> {
             MaterialPageRoute(
               builder: (BuildContext context) => MHome(),
             ),
-            (route) => false,
+                (route) => false,
           );
         },
         child: Text("Home",
@@ -201,7 +196,7 @@ class _MHome extends State<MHome> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Mrsplash()),
+            MaterialPageRoute(builder: (context) => InitMrequest()),
           );
         },
         child: Text("Customer Request",
@@ -262,7 +257,7 @@ class _MHome extends State<MHome> {
               MaterialPageRoute(
                 builder: (BuildContext context) => MSignIn(),
               ),
-              (route) => false,
+                  (route) => false,
             );
           }
         },
@@ -329,7 +324,7 @@ class _MHome extends State<MHome> {
                   ),
                   Card(
                     margin:
-                        EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.phone,
@@ -345,7 +340,7 @@ class _MHome extends State<MHome> {
                   ),
                   Card(
                     margin:
-                        EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.email,
@@ -361,7 +356,7 @@ class _MHome extends State<MHome> {
                   ),
                   Card(
                     margin:
-                        EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                    EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.add_location_sharp,

@@ -13,7 +13,7 @@ class Wrapper extends StatelessWidget {
       return SignIn();
     } else {
       // print(user.uid);
-      return SplashScreen();
+      return InitializationApp();
     }
 
     //return Authenticate();

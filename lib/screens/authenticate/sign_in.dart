@@ -164,10 +164,8 @@ class _SignInState extends State<SignIn> {
                     onPressed: () async {
                       //_auth.getData();
                       if (formkey.currentState.validate()) {
-                        showAlertDialog(context);
                         dynamic result = await _auth.signInUser(email.text, pw.text);
                         if (result == null) {
-                          Navigator.pop(context);
                           showDialog(
                             context: context,
                             barrierDismissible: false, // user must tap button!
@@ -197,7 +195,6 @@ class _SignInState extends State<SignIn> {
                           var document = await Firestore.instance.collection('USER').document(result.uid).get();
                           if (document != null) {
                             String role = document.data['role'].toString();
-                            Navigator.pop(context);
                             if (role == 'user') {
                               Navigator.pushAndRemoveUntil(
                                 context,

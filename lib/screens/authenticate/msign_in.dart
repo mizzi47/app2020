@@ -163,11 +163,9 @@ class _MSignInState extends State<MSignIn> {
                     minWidth: MediaQuery.of(context).size.width,
                     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     onPressed: () async {
-                      showAlertDialog(context);
                       if (formkey.currentState.validate()) {
                         dynamic result = await _auth.signInUser(email.text, pw.text);
                         if (result == null) {
-                          Navigator.pop(context);
                           showDialog(
                             context: context,
                             barrierDismissible: false, // user must tap button!
@@ -197,7 +195,6 @@ class _MSignInState extends State<MSignIn> {
                           var document = await Firestore.instance.collection('USER').document(result.uid).get();
                           if(document!=null){
                             String role = document.data['role'].toString();
-                            Navigator.pop(context);
                             if(role == 'mech'){
                               Navigator.pushAndRemoveUntil(
                                 context,
