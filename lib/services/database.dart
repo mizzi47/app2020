@@ -29,8 +29,10 @@ class DatabaseService {
   }
 
   Future updateMechData(String nm, String gm, String pn) async {
+    double lat = 3.1466;
+    double long = 101.6958;
     return await MechCollection.document(uid).setData(
-        {'Name': nm, 'Garage Name': gm, 'Phone Number': pn, 'role': "mech"});
+        {'Name': nm, 'Garage Name': gm, 'Phone Number': pn, 'role': "mech", 'latitude': 3.1446, 'longtitude': 101.6958 });
   }
 
   Future updateMap(double lat, double long) async {

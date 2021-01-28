@@ -21,10 +21,43 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 String _currentAddress;
+String mechAddress;
 final AuthService _auth = AuthService();
+Position _currentPosition;
 
-class Init {
+_getCurrentLocation() {
+  geolocator
+      .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+      .then((Position position) {
+    _currentPosition = position;
+
+  }).catchError((e) {
+    print(e);
+  });
+}
+
+_getAddressFromLatLng() async {
+  try {
+    List<Placemark> p;
+    p = await geolocator.placemarkFromCoordinates(lat, long);
+
+    Placemark place = p[0];
+
+    _currentAddress =  "${place.locality}, ${place.postalCode}, ${place.country}";
+  } catch (e) {
+    print(e);
+  }
+}
+
+
+
+class Init{
+
+
   static Future initialize() async {
+
+    lat = 0;
+    long = 0;
     await _registerServices();
     await _loadSettings();
   }
@@ -38,15 +71,18 @@ class Init {
     pnumber = document.data['Phone Number'].toString();
     lat = document.data['latitude'];
     long = document.data['longtitude'];
-    print(user.uid);
-    print(name);
-    print(pnumber);
-    print(lat);
-    print(long);
+
   }
 
   static _loadSettings() async {
     //TODO load settings
+    print(_currentAddress);
+    print(user.uid);
+    print(name);
+    print(pnumber);
+    await _getAddressFromLatLng();
+    print(_currentAddress);
+    mechAddress = _currentAddress;
   }
 
 }
@@ -54,6 +90,7 @@ class Init {
 class InitializationApp extends StatelessWidget {
 
   final Future _initFuture = Init.initialize();
+
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +129,7 @@ class SplashScreen extends StatelessWidget {
 
 
 class MHome extends StatefulWidget {
+
   final appTitle = 'SECURIDE';
 
   @override
@@ -104,27 +142,10 @@ class _MHome extends State<MHome> {
 
   @override
   void initState() {
-    _getAddressFromLatLng();
     super.initState();
     initUser();
     setState(() {});
   }
-
-  _getAddressFromLatLng() async {
-    try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(lat, long);
-
-      Placemark place = p[0];
-
-      setState(() {
-        _currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
 
   initUser() async {
     user = await auth.currentUser();
@@ -363,7 +384,7 @@ class _MHome extends State<MHome> {
                         color: Colors.teal.shade400,
                       ),
                       title: Text(
-                        _currentAddress,
+                        mechAddress,
                         style: TextStyle(
                           color: Colors.teal.shade400,
                         ),

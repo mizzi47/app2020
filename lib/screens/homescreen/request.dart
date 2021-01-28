@@ -47,22 +47,18 @@ class Init {
     lat = null;
     long = null;
     user = await auth.currentUser();
-    document = await Firestore.instance
-        .collection('CLIENTDATA')
-        .document(user.uid)
-        .get();
+    document = await Firestore.instance.collection('CLIENTDATA').document(user.uid).get();
     if (document.data['request'] == null) {
       reqId = "no";
     } else {
       reqId = document.data['request'].toString();
       status = document.data['status'].toString();
-      document =
-      await Firestore.instance.collection('MECHDATA').document(reqId).get();
-      name = document.data['Name'].toString();
-      gname = document.data['Garage Name'].toString();
-      pnumber = document.data['Phone Number'].toString();
-      lat = document.data['latitude'];
-      long = document.data['longtitude'];
+      mechdocument = await Firestore.instance.collection('MECHDATA').document(reqId).get();
+      name = mechdocument.data['Name'].toString();
+      gname = mechdocument.data['Garage Name'].toString();
+      pnumber = mechdocument.data['Phone Number'].toString();
+      lat = mechdocument.data['latitude'];
+      long = mechdocument.data['longtitude'];
     }
     print(name + "ssd");
   }
@@ -269,6 +265,31 @@ class _Crequest extends State<Crequest> {
       ),
     );
 
+    final cancel = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Colors.redAccent,
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width * 0.3,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () async {
+          Firestore.instance.collection('CLIENTDATA').document(user.uid).updateData({'request': FieldValue.delete()});
+          Firestore.instance.collection('MECHDATA').document(reqId).collection('request').document(user.uid).delete();
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => InitRequest(),
+            ),
+                (route) => false,
+          );
+        },
+        child: Text("Cancel Request",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
     Size size = MediaQuery.of(context).size;
 
     Widget _buildChild() {
@@ -358,6 +379,7 @@ class _Crequest extends State<Crequest> {
                       ),
                     ),
                     getlocation,
+                    cancel,
                     SizedBox(height: 15.0)
                   ],
                 ),
@@ -377,84 +399,6 @@ class _Crequest extends State<Crequest> {
           backgroundColor: Colors.blueGrey,
         ),
         body: _buildChild(),
-        // body:Container(
-        //   color: Colors.black12,
-        //   child: Column(
-        //     children: [
-        //       SizedBox(height: 15.0),
-        //       Center(child: Text('YOUR REQUEST', textAlign: TextAlign.center,
-        //           style: style)),
-        //       SizedBox(height: 20.0),
-        //       Container(
-        //         color: Colors.black38,
-        //         child: Column(
-        //
-        //           mainAxisAlignment: MainAxisAlignment.center,
-        //           crossAxisAlignment: CrossAxisAlignment.center,
-        //           children: <Widget>[
-        //             SizedBox(
-        //               height: 25.0,
-        //             ),
-        //             Text(
-        //               gname,
-        //               style: TextStyle(
-        //                 fontFamily: 'Pacifico',
-        //                 fontWeight: FontWeight.bold,
-        //                 fontSize: 18.0,
-        //                 color: Colors.white,
-        //               ),
-        //             ),
-        //             Text(
-        //               name,
-        //               style: TextStyle(
-        //                 fontFamily: 'SourceSansPro',
-        //                 fontSize: 18.0,
-        //                 letterSpacing: 2.5,
-        //                 color: Colors.blue.shade50,
-        //               ),
-        //             ),
-        //             Container(
-        //               width: 200.0,
-        //               margin: EdgeInsets.symmetric(vertical: 8.0),
-        //               child: Divider(
-        //                 color: Colors.white,
-        //               ),
-        //             ),
-        //             Card(
-        //               margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
-        //               child: ListTile(
-        //                 leading: Icon(
-        //                   Icons.phone,
-        //                   color: Colors.teal.shade400,
-        //                 ),
-        //                 title: Text(
-        //                   pnumber,
-        //                   style: TextStyle(
-        //                     color: Colors.teal.shade400,
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //             Card(
-        //               margin: EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
-        //               child: ListTile(
-        //                 leading: Text(
-        //                   "STATUS: "+status,
-        //                   style: TextStyle(
-        //                     color: Colors.teal.shade400,
-        //                   ),
-        //                 ),
-        //                 ),
-        //             ),
-        //             getlocation,
-        //             SizedBox(height: 15.0)
-        //           ],
-        //         ),
-        //       ),
-        //     ],
-        //
-        //   ),
-        // ),
         drawer: Theme(
           data: Theme.of(context).copyWith(
             canvasColor: Colors.blueGrey,

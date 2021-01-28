@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'package:app2020/screens/authenticate/sign_in.dart';
 import 'package:app2020/screens/homescreen/request.dart';
+import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app2020/services/authservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' as a;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:geodesy/geodesy.dart' as d;
 
 var document;
 var mechdocument;
@@ -19,6 +21,27 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 String uemail;
 final AuthService _auth = AuthService();
+d.Geodesy geodesy = d.Geodesy();
+a.Position _currentPosition;
+
+_getCurrentLocation() {
+  geolocator
+      .getCurrentPosition(desiredAccuracy: a.LocationAccuracy.best)
+      .then((a.Position position) {
+    _currentPosition = position;
+
+  }).catchError((e) {
+    print(e);
+  });
+}
+
+
+Location location = Location();//explicit reference to the Location class
+Future _checkGps() async {
+  if (!await location.serviceEnabled()) {
+    location.requestService();
+  }
+}
 
 class Init {
   static Future initialize() async {
@@ -94,7 +117,7 @@ class _Home extends State<Home> {
   String role;
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   GoogleMapController _controller;
-  Position ps;
+  a.Position ps;
 
   @override
   void initState() {
@@ -118,6 +141,12 @@ class _Home extends State<Home> {
     print(mid);
     await _auth.reqMech(mid);
     await _auth.addToMech(mid, name, bname, pnumber);
+  }
+
+  calcDistance(double alat, double along, double blat, double blong){
+    d.LatLng aa = d.LatLng(alat, along);
+    d.LatLng bb = d.LatLng(blat, blong);
+    num distance = geodesy.distanceBetweenTwoGeoPoints(aa, bb);
   }
 
   Future<bool> _onBackPressed() {
@@ -153,6 +182,11 @@ class _Home extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+
     showAlertDialog(BuildContext context) {
       AlertDialog alert = AlertDialog(
         content: new Row(
@@ -349,7 +383,7 @@ class _Home extends State<Home> {
                                                           .keyboard_arrow_right,
                                                       color: Colors.white,
                                                       size: 30.0),
-                                                  onPressed: () {
+                                                  onPressed: () async{
                                                     myMarker.add(Marker(
                                                         markerId: MarkerId(snapshot
                                                                 .data
@@ -365,6 +399,23 @@ class _Home extends State<Home> {
                                                                     .documents[i]
                                                                 [
                                                                 "longtitude"])));
+                                                    _serviceEnabled = await location.serviceEnabled();
+                                                    if (!_serviceEnabled) {
+                                                      _serviceEnabled = await location.requestService();
+
+                                                      if (!_serviceEnabled) {
+                                                        return Home();
+                                                      }
+                                                    }
+                                                    _getCurrentLocation();
+                                                    d.LatLng aa = d.LatLng(_currentPosition.latitude, _currentPosition.longitude);
+                                                    d.LatLng bb = d.LatLng(snapshot.data.documents[i]["latitude"],  snapshot.data.documents[i]["longtitude"]);
+                                                    print(aa);
+                                                    print(bb);
+                                                    num distance = geodesy.distanceBetweenTwoGeoPoints(aa, bb);
+                                                    print(distance);
+                                                    distance = distance/1000;
+                                                    distance = num.parse((distance).toStringAsFixed(2));
                                                     showDialog(
                                                       context: context,
                                                       barrierDismissible: false,
@@ -376,11 +427,40 @@ class _Home extends State<Home> {
                                                                   .data
                                                                   .documents[i]
                                                               ["Garage Name"]),
-                                                          content:
-                                                              SingleChildScrollView(
+                                                          content: SingleChildScrollView(
                                                             child: ListBody(
-                                                              children: <
-                                                                  Widget>[
+                                                              children: <Widget>[
+                                                                Container(
+                                                                    decoration: BoxDecoration(
+                                                                      color: Theme.of(context).canvasColor,
+                                                                    ),
+                                                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                                                    child: Column(
+                                                                      children: <Widget>[
+                                                                        Row(
+                                                                          children: <Widget>[
+                                                                            Icon(Icons.alt_route_sharp),
+                                                                            SizedBox(
+                                                                              width: 8,
+                                                                            ),
+                                                                            Expanded(
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: <Widget>[
+                                                                                  Text(
+                                                                                    'DISTANCE: ' + distance.toString()+" KM",
+                                                                                    style: Theme.of(context).textTheme.caption,
+                                                                                  )
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 8,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    )),
                                                                 Container(
                                                                   height: MediaQuery.of(
                                                                               context)

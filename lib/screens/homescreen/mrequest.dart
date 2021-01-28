@@ -55,7 +55,7 @@ class InitMrequest extends StatelessWidget {
         future: _initFuture,
         builder: (context, snapshot){
           if (snapshot.connectionState == ConnectionState.done){
-            return InitMrequest();
+            return Mrequest();
           } else {
             return SplashScreen();
           }
@@ -85,6 +85,8 @@ class SplashScreen extends StatelessWidget {
 
 
 class Mrequest extends StatefulWidget {
+  IconData ic = Icons.star_border;
+
   final appTitle = 'Rider Pocket Mechanic';
 
   @override
@@ -226,12 +228,128 @@ class _Mrequest extends State<Mrequest> {
       ),
     );
 
+    final history = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(15.0),
+      color: Color(0xff01A0C7),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () {
+        },
+        child: Text("History",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
+
 
     Size size = MediaQuery.of(context).size;
 
 
     fetchClient() {
       return Firestore.instance.collection("MECHDATA").document(user.uid).collection("request").snapshots();
+    }
+
+    openAlertBox() {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(32.0))),
+              contentPadding: EdgeInsets.only(top: 10.0),
+              content: Container(
+                width: 300.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          "Rate",
+                          style: TextStyle(fontSize: 24.0),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(Icons.star_border, color:Color(0xff00bfa5)),
+                              onPressed: () {
+                                setState(() {
+                                  Icon(Icons.star, color: Color(0xff00bfa5));
+                                });
+                              },
+                            ),
+                            Icon(
+                              Icons.star_border,
+                              color: Color(0xff00bfa5),
+                              size: 30.0,
+
+                            ),
+                            Icon(
+                              Icons.star_border,
+                              color: Color(0xff00bfa5),
+                              size: 30.0,
+                            ),
+                            Icon(
+                              Icons.star_border,
+                              color: Color(0xff00bfa5),
+                              size: 30.0,
+                            ),
+                            Icon(
+                              Icons.star_border,
+                              color: Color(0xff00bfa5),
+                              size: 30.0,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    Divider(
+                      color: Colors.grey,
+                      height: 4.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30.0, right: 30.0),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "Add Review",
+                          border: InputBorder.none,
+                        ),
+                        maxLines: 8,
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                        decoration: BoxDecoration(
+                          color: Color(0xff00bfa5),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(32.0),
+                              bottomRight: Radius.circular(32.0)),
+                        ),
+                        child: Text(
+                          "Rate Product",
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
     }
 
 
@@ -314,22 +432,128 @@ class _Mrequest extends State<Mrequest> {
                                                             content: SingleChildScrollView(
                                                               child: ListBody(
                                                                 children: <Widget>[
-                                                                  Text('Are you sure to accept this request?'),
+                                                                  Text('REQUEST HANDLING'),
                                                                 ],
                                                               ),
                                                             ),
                                                             actions: <Widget>[
                                                               TextButton(
-                                                                child: Text('OK'),
+                                                                style: TextButton.styleFrom(
+                                                                  primary: Colors.blue,
+                                                                ),
+                                                                child: Text('Cancel'),
                                                                 onPressed: () {
                                                                   Navigator.of(context).pop();
+                                                                },
+                                                              ),
+
+
+                                                              TextButton(
+                                                                style: TextButton.styleFrom(
+                                                                  primary: Colors.red,
+                                                                ),
+                                                                child: Text('DECLINE'),
+
+                                                                onPressed: () {
+                                                                  showDialog(
+                                                                    context: context,
+                                                                    barrierDismissible: false, // user must tap button!
+                                                                    builder: (BuildContext context) {
+                                                                      return AlertDialog(
+                                                                        title: Text('DECLINE?'),
+                                                                        content: SingleChildScrollView(
+                                                                          child: ListBody(
+                                                                            children: <Widget>[
+                                                                              Text('Are you sure to decline this request?'),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        actions: <Widget>[
+                                                                          TextButton(
+                                                                            style: TextButton.styleFrom(
+                                                                              primary: Colors.blue,
+                                                                            ),
+                                                                            child: Text('Cancel'),
+                                                                            onPressed: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                          ),
+                                                                          TextButton(
+                                                                            style: TextButton.styleFrom(
+                                                                              primary: Colors.red,
+                                                                            ),
+                                                                            child: Text('CONFIRM'),
+
+                                                                            onPressed: () async {
+                                                                              print(user.uid);
+                                                                              Firestore.instance.collection('CLIENTDATA').document(snapshot.data.documents[i].documentID).updateData({'request': FieldValue.delete(),'status': FieldValue.delete() });
+                                                                              Firestore.instance.collection('MECHDATA').document(user.uid).collection('request').document(snapshot.data.documents[i].documentID).delete();
+                                                                              Navigator.pushAndRemoveUntil(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder: (BuildContext context) => InitMrequest(),
+                                                                                ),
+                                                                                    (route) => false,
+                                                                              );
+                                                                            },
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                },
+                                                              ),
+                                                              TextButton(
+                                                                style: TextButton.styleFrom(
+                                                                  primary: Colors.green,
+                                                                ),
+                                                                child: Text('ACCEPT'),
+                                                                onPressed: () {
+                                                                  showDialog(
+                                                                    context: context,
+                                                                    barrierDismissible: false, // user must tap button!
+                                                                    builder: (BuildContext context) {
+                                                                      return AlertDialog(
+                                                                        title: Text('ACCEPT?'),
+                                                                        content: SingleChildScrollView(
+                                                                          child: ListBody(
+                                                                            children: <Widget>[
+                                                                              Text('Are you sure to accept this request?'),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        actions: <Widget>[
+                                                                          TextButton(
+                                                                            style: TextButton.styleFrom(
+                                                                              primary: Colors.blue,
+                                                                            ),
+                                                                            child: Text('Cancel'),
+                                                                            onPressed: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                          ),
+                                                                          TextButton(
+                                                                            style: TextButton.styleFrom(
+                                                                              primary: Colors.green,
+                                                                            ),
+                                                                            child: Text('CONFIRM'),
+
+                                                                            onPressed: () {
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    },
+                                                                  );
                                                                 },
                                                               ),
                                                             ],
                                                           );
                                                         },
                                                       );
-                                                    }),
+                                                    }
+                                                    ),
                                               ),
                                             ),
                                           ),
