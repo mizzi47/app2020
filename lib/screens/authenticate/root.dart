@@ -1,8 +1,7 @@
-import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/MWrapper.dart';
-import 'file:///C:/Users/mizi/AndroidStudioProjects/app2020/lib/screens/wrapper/Wrapper.dart';
+
 import 'package:app2020/models/user.dart';
-import 'package:app2020/screens/authenticate/backupsign.dart';
-import 'package:app2020/screens/homescreen/backuphome.dart';
+import 'package:app2020/screens/wrapper/MWrapper.dart';
+import 'package:app2020/screens/wrapper/Wrapper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

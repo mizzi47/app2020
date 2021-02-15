@@ -119,7 +119,7 @@ class _RegisterState extends State<Register> {
                       TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
-                            return 'Please enter Bike name';
+                            return 'Please enter Bike model';
                           }
                           return null;
                         },
@@ -130,7 +130,7 @@ class _RegisterState extends State<Register> {
                             filled: true,
                             fillColor: Colors.white,
                             contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Bike Name",
+                            hintText: "Bike Model",
                             border:
                             OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
                       ),

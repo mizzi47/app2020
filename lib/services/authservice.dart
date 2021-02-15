@@ -60,6 +60,26 @@ class AuthService {
     }
   }
 
+  Future updUser(String nm, String bm, String pn) async {
+    try {
+      muser = await _auth.currentUser();
+      await DatabaseService(uid: muser.uid).updateClientData(nm, bm, pn);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future updMech(String nm, String gm, String pn) async {
+    try {
+      muser = await _auth.currentUser();
+      await DatabaseService(uid: muser.uid).updateMechData(nm, gm, pn);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   updateMap(double lat, double long) async {
     try {
       muser = await _auth.currentUser();

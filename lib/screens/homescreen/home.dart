@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:app2020/screens/authenticate/sign_in.dart';
+import 'package:app2020/screens/homescreen/profile.dart';
 import 'package:app2020/screens/homescreen/request.dart';
+import 'package:app2020/screens/homescreen/update.dart';
 import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +19,7 @@ var mechdocument;
 String name;
 String bname;
 String pnumber;
+final a.Geolocator geolocator = a.Geolocator()..forceAndroidLocationManager;
 final FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 String uemail;
@@ -271,6 +274,52 @@ class _Home extends State<Home> {
           );
         },
         child: Text("Current Request",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
+    final update = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(10.0),
+      color: Color(0xff01A0C7),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width * 0.3,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () async {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => Update(),
+            ),
+                (route) => false,
+          );
+        },
+        child: Text("Update Profile",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
+    final view = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(10.0),
+      color: Color(0xff01A0C7),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width * 0.3,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () async {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => InitializationView(),
+            ),
+                (route) => false,
+          );
+        },
+        child: Text("View Profile",
             textAlign: TextAlign.center,
             style: style.copyWith(
                 color: Colors.white, fontWeight: FontWeight.bold)),
@@ -712,6 +761,18 @@ class _Home extends State<Home> {
 
                 ListTile(
                   title: request,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: view,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: update,
                   onTap: () {
                     Navigator.pop(context);
                   },
